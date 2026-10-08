@@ -1910,7 +1910,37 @@ h1, h2, h3 {
 
   checkSession();
 
-</script>
+</script>async function applyRolePermissions() {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error) {
+        console.error("Role fetch error:", error);
+        return;
+    }
+
+    const isAdmin = profile.role === "admin";
+
+    // Hide Add Book for students
+    document.querySelectorAll("button").forEach(button => {
+        const text = button.textContent.trim().toLowerCase();
+
+        if (text.includes("add book")) {
+            button.style.display = isAdmin ? "" : "none";
+        }
+    });
+}
+
+applyRolePermissions();
 
 </body>
 </html>
