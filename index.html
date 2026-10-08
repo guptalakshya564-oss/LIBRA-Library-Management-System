@@ -1,3606 +1,3168 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LIBRA - Library Management System</title>
+  <title>LIBRA - Library Management System</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-/* =====================================================
-   LIBRA COLORFUL PREMIUM THEME
-   ===================================================== */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e3a8a;
+      --purple: #7c3aed;
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --bg: #f4f7ff;
+      --card: #ffffff;
+      --text: #172554;
+      --muted: #64748b;
+      --border: #dbeafe;
+    }
 
-:root {
-    --primary: #2563eb;
-    --primary-dark: #1e3a8a;
-    --purple: #7c3aed;
-    --pink: #ec4899;
-    --cyan: #06b6d4;
-    --green: #10b981;
-    --orange: #f59e0b;
-    --red: #ef4444;
-    --bg: #f4f7ff;
-    --card: #ffffff;
-    --text: #172554;
-    --muted: #667085;
-}
+    body {
+      background: linear-gradient(135deg, #f5f7ff, #eef6ff);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
+    /* ================= LOGIN ================= */
 
-body {
-    background: linear-gradient(135deg, #f5f7ff, #eef6ff);
-    color: var(--text);
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* =====================================================
-   LOGIN
-   ===================================================== */
-
-#loginPage {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-
-    background:
+    #loginPage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background:
         radial-gradient(circle at top left, #dbeafe, transparent 35%),
         radial-gradient(circle at bottom right, #ede9fe, transparent 35%),
-        linear-gradient(135deg, #f5f7ff, #eef6ff);
-}
-
-.login-box {
-    width: 420px;
-    max-width: 100%;
-    background: white;
-    padding: 35px;
-    border-radius: 24px;
-
-    box-shadow:
-        0 20px 60px rgba(37, 99, 235, 0.18);
-
-    border: 1px solid #e0e7ff;
-}
-
-.logo {
-    text-align: center;
-    font-size: 38px;
-    font-weight: 800;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #7c3aed,
-        #ec4899
-    );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    text-align: center;
-    color: var(--muted);
-    margin-bottom: 25px;
-}
-
-/* LOGIN TABS */
-
-.tabs {
-    display: flex;
-    margin-bottom: 20px;
-
-    background: #f1f5ff;
-    padding: 5px;
-    border-radius: 12px;
-}
-
-.tab {
-    flex: 1;
-    padding: 12px;
-
-    border: none;
-    background: transparent;
-
-    cursor: pointer;
-    font-weight: bold;
-    color: #64748b;
-
-    border-radius: 9px;
-}
-
-.tab.active {
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
-
-    box-shadow:
-        0 5px 15px rgba(37, 99, 235, 0.25);
-}
-
-/* INPUTS */
-
-input,
-select {
-    width: 100%;
-
-    padding: 12px;
-
-    border: 1px solid #dbeafe;
-    border-radius: 10px;
-
-    margin-top: 8px;
-    margin-bottom: 15px;
-
-    background: white;
-}
-
-input:focus,
-select:focus {
-    outline: none;
-
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-
-/* BUTTONS */
-
-button {
-    border: none;
-    border-radius: 10px;
-
-    padding: 11px 16px;
-
-    cursor: pointer;
-    font-weight: bold;
-
-    transition: 0.25s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-.primary {
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
-
-    color: white;
-
-    box-shadow:
-        0 5px 15px rgba(37, 99, 235, 0.25);
-}
-
-.primary:hover {
-    box-shadow:
-        0 8px 20px rgba(124, 58, 237, 0.35);
-}
-
-.danger {
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color: white;
-}
-
-.secondary {
-    background: #e2e8f0;
-    color: #334155;
-}
-
-/* MESSAGE */
-
-.message {
-    padding: 10px;
-    border-radius: 9px;
-
-    margin-bottom: 15px;
-
-    display: none;
-}
-
-.success {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.error {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-/* =====================================================
-   MAIN APPLICATION
-   ===================================================== */
-
-#app {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar {
-    width: 250px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #172554,
-            #1e40af,
-            #312e81
-        );
-
-    color: white;
-
-    padding: 25px 15px;
-
-    position: fixed;
-
-    height: 100vh;
-
-    box-shadow:
-        5px 0 25px rgba(37, 99, 235, 0.18);
-
-    z-index: 10;
-}
-
-.sidebar h2 {
-    text-align: center;
-
-    margin-bottom: 30px;
-
-    font-size: 28px;
-
-    color: #67e8f9;
-}
-
-/* NAVIGATION */
-
-.nav-btn {
-    width: 100%;
-
-    background: transparent;
-
-    color: #dbeafe;
-
-    text-align: left;
-
-    margin: 5px 0;
-
-    padding: 13px;
-
-    border-radius: 12px;
-}
-
-.nav-btn:hover,
-.nav-btn.active {
-    background:
-        linear-gradient(
-            90deg,
-            #2563eb,
-            #7c3aed
-        );
-
-    color: white;
-
-    transform: translateX(5px);
-
-    box-shadow:
-        0 5px 15px rgba(124, 58, 237, 0.3);
-}
-
-/* LOGOUT */
-
-.logout {
-    margin-top: 30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #b91c1c
-        );
-
-    color: white;
-
-    width: 100%;
-}
-
-/* CONTENT */
-
-.content {
-    margin-left: 250px;
-
-    width: calc(100% - 250px);
-
-    padding: 30px;
-}
-
-/* TOP BAR */
-
-.topbar {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 25px;
-}
-
-.topbar h1 {
-    font-size: 28px;
-}
-
-.user-info {
-    background: white;
-
-    padding: 10px 15px;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 4px 15px rgba(30, 64, 175, 0.08);
-
-    color: #334155;
-}
-
-/* =====================================================
-   DASHBOARD CARDS
-   ===================================================== */
-
-.cards {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 18px;
-
-    margin-bottom: 25px;
-}
-
-.card {
-    background: white;
-
-    padding: 22px;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 8px 25px rgba(30, 64, 175, 0.10);
-
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-6px);
-
-    box-shadow:
-        0 15px 30px rgba(37, 99, 235, 0.18);
-}
-
-.card h3 {
-    color: #667085;
-
-    font-size: 14px;
-
-    margin-bottom: 10px;
-}
-
-.card .number {
-    font-size: 30px;
-
-    font-weight: bold;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Different card borders */
-
-.cards .card:nth-child(1) {
-    border-top: 5px solid #2563eb;
-}
-
-.cards .card:nth-child(2) {
-    border-top: 5px solid #7c3aed;
-}
-
-.cards .card:nth-child(3) {
-    border-top: 5px solid #10b981;
-}
-
-.cards .card:nth-child(4) {
-    border-top: 5px solid #f59e0b;
-}
-
-/* =====================================================
-   SECTIONS
-   ===================================================== */
-
-.section {
-    background: white;
-
-    padding: 22px;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 8px 25px rgba(30, 64, 175, 0.08);
-
-    margin-bottom: 22px;
-}
-
-.section-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 18px;
-
-    gap: 15px;
-}
-
-/* =====================================================
-   TABLE
-   ===================================================== */
-
-.table-container {
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    background: white;
-
-    border-radius: 15px;
-
-    overflow: hidden;
-}
-
-th,
-td {
-    padding: 13px;
-
-    border-bottom:
-        1px solid #e5e7eb;
-
-    text-align: left;
-}
-
-thead {
-    background:
-        linear-gradient(
-            90deg,
-            #1e3a8a,
-            #4f46e5
-        );
-
-    color: white;
-}
-
-tbody tr {
-    transition: 0.2s;
-}
-
-tbody tr:hover {
-    background: #eff6ff;
-}
-
-/* BADGES */
-
-.badge {
-    padding: 5px 9px;
-
-    border-radius: 20px;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    display: inline-block;
-}
-
-.available {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.issued {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-/* =====================================================
-   MODALS
-   ===================================================== */
-
-.modal {
-    position: fixed;
-
-    inset: 0;
-
-    background:
-        rgba(15, 23, 42, 0.55);
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    z-index: 100;
-}
-
-.modal-box {
-    background: white;
-
-    width: 520px;
-
-    max-width: 92%;
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    padding: 25px;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 20px 60px rgba(30, 64, 175, 0.25);
-}
-
-.modal-box h2 {
-    margin-bottom: 15px;
-}
-
-.modal-actions {
-    display: flex;
-
-    justify-content: flex-end;
-
-    gap: 10px;
-
-    margin-top: 10px;
-}
-
-/* =====================================================
-   ADMIN BADGE
-   ===================================================== */
-
-.role-badge {
-    display: inline-block;
-
-    margin-left: 8px;
-
-    padding: 4px 8px;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    font-weight: bold;
-}
-
-.role-admin {
-    background: #ede9fe;
-    color: #6d28d9;
-}
-
-.role-student {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
-
-@media(max-width: 1000px) {
-
-    .cards {
-        grid-template-columns:
-            repeat(2, 1fr);
+        linear-gradient(135deg, #f8fbff, #eef2ff);
     }
 
-    .sidebar {
-        width: 210px;
+    .login-card {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      padding: 35px;
+      box-shadow: 0 25px 60px rgba(37, 99, 235, 0.18);
     }
 
-    .content {
-        margin-left: 210px;
-
-        width: calc(100% - 210px);
+    .logo-box {
+      text-align: center;
+      margin-bottom: 25px;
     }
-}
 
-@media(max-width: 700px) {
+    .logo {
+      width: 75px;
+      height: 75px;
+      margin: auto;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: 0 12px 30px rgba(124,58,237,0.3);
+    }
+
+    .logo-box h1 {
+      margin-top: 15px;
+      font-size: 30px;
+    }
+
+    .logo-box p {
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .login-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .login-tab {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: #eef2ff;
+      color: #475569;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-tab.active {
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #334155;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      outline: none;
+      font-size: 14px;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 10px 25px rgba(37,99,235,0.25);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #loginMessage {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* ================= APP ================= */
 
     #app {
-        display: block;
+      display: none;
+      min-height: 100vh;
     }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ================= SIDEBAR ================= */
 
     .sidebar {
-        position: static;
-
-        width: 100%;
-
-        height: auto;
+      width: 250px;
+      background: linear-gradient(180deg, #172554, #1e40af, #312e81);
+      color: white;
+      padding: 22px 15px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+      box-shadow: 8px 0 30px rgba(37,99,235,0.18);
     }
 
-    .content {
-        margin-left: 0;
-
-        width: 100%;
-
-        padding: 20px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+      padding: 8px;
     }
 
-    .cards {
-        grid-template-columns: 1fr;
+    .brand-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #06b6d4, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .brand h2 {
+      font-size: 21px;
+    }
+
+    .brand small {
+      color: #bfdbfe;
+    }
+
+    .nav-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #bfdbfe;
+      margin: 15px 10px 8px;
+    }
+
+    .nav-item {
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      border-radius: 11px;
+      background: transparent;
+      color: #e0e7ff;
+      text-align: left;
+      margin-bottom: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      box-shadow: 0 8px 20px rgba(124,58,237,0.35);
+    }
+
+    .logout-btn {
+      margin-top: 20px;
+      background: rgba(239,68,68,0.18);
+      color: #fecaca;
+    }
+
+    .logout-btn:hover {
+      background: #ef4444;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 25px;
     }
 
     .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      background: white;
+      border-radius: 18px;
+      padding: 17px 22px;
+      box-shadow: 0 8px 30px rgba(30,64,175,0.08);
+    }
+
+    .topbar h1 {
+      font-size: 25px;
+    }
+
+    .topbar p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .role-badge {
+      padding: 9px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    /* ================= PAGES ================= */
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .page-header h2 {
+      font-size: 23px;
+    }
+
+    /* ================= DASHBOARD ================= */
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 8px 30px rgba(30,64,175,0.08);
+      transition: 0.25s;
+      border-left: 5px solid var(--primary);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card.blue {
+      border-left-color: #2563eb;
+    }
+
+    .stat-card.purple {
+      border-left-color: #7c3aed;
+    }
+
+    .stat-card.green {
+      border-left-color: #10b981;
+    }
+
+    .stat-card.orange {
+      border-left-color: #f59e0b;
+    }
+
+    .stat-icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card h3 {
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
+
+    .stat-card p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ================= BUTTONS ================= */
+
+    .btn {
+      border: none;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+    }
+
+    .btn-warning {
+      background: #f59e0b;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* ================= TABLE ================= */
+
+    .table-card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(30,64,175,0.08);
+      overflow-x: auto;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #1e3a8a, #4f46e5);
+      color: white;
+      padding: 13px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+    }
+
+    tr:hover td {
+      background: #f8faff;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* ================= MODAL ================= */
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close {
+      border: none;
+      background: #fee2e2;
+      color: #991b1b;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media(max-width: 1000px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 750px) {
+      .sidebar {
+        width: 210px;
+      }
+
+      .main {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media(max-width: 600px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+      }
+
+      .layout {
+        display: block;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+      }
+
+      .topbar {
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 10px;
+      }
     }
 
-    .section-header {
-        flex-direction: column;
-
-        align-items: flex-start;
+    .hidden {
+      display: none !important;
     }
-}
 
-</style>
+    .message {
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     LOGIN PAGE
-     ===================================================== -->
+<!-- ========================================================= -->
+<!-- LOGIN PAGE -->
+<!-- ========================================================= -->
 
 <div id="loginPage">
 
-    <div class="login-box">
+  <div class="login-card">
 
-        <div class="logo">
-            LIBRA
-        </div>
-
-        <div class="subtitle">
-            Library Management System
-        </div>
-
-        <div class="tabs">
-
-            <button
-                class="tab active"
-                id="studentTab"
-                onclick="selectLoginType('student')">
-
-                👨‍🎓 Student Login
-
-            </button>
-
-            <button
-                class="tab"
-                id="adminTab"
-                onclick="selectLoginType('admin')">
-
-                👨‍💼 Admin Login
-
-            </button>
-
-        </div>
-
-        <div
-            id="loginMessage"
-            class="message">
-        </div>
-
-        <label>Email</label>
-
-        <input
-            type="email"
-            id="loginEmail"
-            placeholder="Enter your email">
-
-        <label>Password</label>
-
-        <input
-            type="password"
-            id="loginPassword"
-            placeholder="Enter password">
-
-        <button
-            class="primary"
-            style="width:100%;"
-            onclick="login()">
-
-            Login
-
-        </button>
-
-        <p
-            style="
-            text-align:center;
-            margin-top:15px;
-            color:#667085;
-            font-size:13px;">
-
-            LIBRA Digital Library System
-
-        </p>
-
+    <div class="logo-box">
+      <div class="logo">L</div>
+      <h1>LIBRA</h1>
+      <p>Library Management System</p>
     </div>
 
+    <div class="login-tabs">
+      <button
+        class="login-tab active"
+        id="studentTab"
+        onclick="selectLoginType('student')">
+        Student Login
+      </button>
+
+      <button
+        class="login-tab"
+        id="adminTab"
+        onclick="selectLoginType('admin')">
+        Admin Login
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        id="loginEmail"
+        placeholder="Enter your email">
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter your password">
+    </div>
+
+    <button
+      class="login-btn"
+      onclick="loginUser()">
+      Login
+    </button>
+
+    <div id="loginMessage"></div>
+
+  </div>
 </div>
 
 
-<!-- =====================================================
-     MAIN APPLICATION
-     ===================================================== -->
+<!-- ========================================================= -->
+<!-- MAIN APPLICATION -->
+<!-- ========================================================= -->
 
-<div id="app" class="hidden">
+<div id="app">
+
+  <div class="layout">
 
     <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
-        <h2>📚 LIBRA</h2>
+      <div class="brand">
+        <div class="brand-icon">L</div>
 
-        <button
-            class="nav-btn active"
-            onclick="showPage('dashboard',this)">
+        <div>
+          <h2>LIBRA</h2>
+          <small>Library System</small>
+        </div>
+      </div>
 
-            🏠 Dashboard
+      <div class="nav-title">Main Menu</div>
 
-        </button>
+      <button
+        class="nav-item active"
+        id="nav-dashboard"
+        onclick="showPage('dashboard')">
+        📊 Dashboard
+      </button>
 
-        <button
-            class="nav-btn"
-            onclick="showPage('books',this)">
+      <button
+        class="nav-item"
+        id="nav-books"
+        onclick="showPage('books')">
+        📚 Books
+      </button>
 
-            📚 Books
+      <button
+        class="nav-item admin-only"
+        id="nav-members"
+        onclick="showPage('members')">
+        👨‍🎓 Members
+      </button>
 
-        </button>
+      <button
+        class="nav-item admin-only"
+        id="nav-transactions"
+        onclick="showPage('transactions')">
+        🔄 Transactions
+      </button>
 
-        <button
-            class="nav-btn admin-only"
-            onclick="showPage('members',this)">
+      <button
+        class="nav-item"
+        id="nav-inventory"
+        onclick="showPage('inventory')">
+        📦 Inventory
+      </button>
 
-            👨‍🎓 Members
+      <button
+        class="nav-item admin-only"
+        id="nav-reports"
+        onclick="showPage('reports')">
+        📈 Reports
+      </button>
 
-        </button>
-
-        <button
-            class="nav-btn admin-only"
-            onclick="showPage('transactions',this)">
-
-            🔄 Issue / Return
-
-        </button>
-
-        <button
-            class="nav-btn"
-            onclick="showPage('inventory',this)">
-
-            📦 Inventory
-
-        </button>
-
-        <button
-            class="nav-btn admin-only"
-            onclick="showPage('reports',this)">
-
-            📊 Reports
-
-        </button>
-
-        <button
-            class="logout"
-            onclick="logout()">
-
-            🚪 Logout
-
-        </button>
+      <button
+        class="nav-item logout-btn"
+        onclick="logoutUser()">
+        🚪 Logout
+      </button>
 
     </aside>
 
 
-    <!-- CONTENT -->
+    <!-- MAIN CONTENT -->
 
-    <main class="content">
+    <main class="main">
 
-        <div class="topbar">
+      <!-- TOP BAR -->
 
-            <h1 id="pageTitle">
-                Dashboard
-            </h1>
+      <div class="topbar">
 
-            <div class="user-info">
-
-                <span id="userEmail">
-                    User
-                </span>
-
-                <span
-                    id="userRoleBadge"
-                    class="role-badge">
-                </span>
-
-            </div>
-
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="welcomeText">Welcome to LIBRA Library Management System</p>
         </div>
-
-
-        <!-- =================================================
-             DASHBOARD
-             ================================================= -->
-
-        <div id="dashboardPage">
-
-            <div class="cards">
-
-                <div class="card">
-
-                    <h3>
-                        Total Books
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="totalBooks">
-                        0
-                    </div>
-
-                </div>
-
-                <div
-                    class="card admin-only">
-
-                    <h3>
-                        Total Members
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="totalMembers">
-                        0
-                    </div>
-
-                </div>
-
-                <div class="card">
-
-                    <h3>
-                        Available Books
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="availableBooks">
-                        0
-                    </div>
-
-                </div>
-
-                <div class="card">
-
-                    <h3>
-                        Issued Books
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="issuedBooks">
-                        0
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="section">
-
-                <h2>
-                    Welcome to LIBRA 👋
-                </h2>
-
-                <p
-                    style="
-                    margin-top:10px;
-                    color:#667085;">
-
-                    Library Management System for managing
-                    books, members, inventory and
-                    issue/return transactions.
-
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             BOOKS
-             ================================================= -->
 
         <div
-            id="booksPage"
-            class="hidden">
+          class="role-badge"
+          id="roleBadge">
+          Student
+        </div>
 
-            <div class="section">
+      </div>
 
-                <div class="section-header">
 
-                    <h2>
-                        📚 Books
-                    </h2>
+      <!-- ================================================= -->
+      <!-- DASHBOARD -->
+      <!-- ================================================= -->
 
-                    <div>
+      <section
+        class="page active"
+        id="page-dashboard">
 
-                        <input
-                            id="bookSearch"
-                            placeholder="Search title, author or ISBN..."
-                            oninput="filterBooks()"
-                            style="width:300px;">
+        <div class="cards">
 
-                        <button
-                            id="addBookBtn"
-                            class="primary admin-only"
-                            onclick="openBookModal()">
+          <div class="stat-card blue">
+            <div class="stat-icon">📚</div>
+            <h3 id="totalBooks">0</h3>
+            <p>Total Books</p>
+          </div>
 
-                            + Add Book
+          <div class="stat-card purple admin-only">
+            <div class="stat-icon">👨‍🎓</div>
+            <h3 id="totalMembers">0</h3>
+            <p>Total Members</p>
+          </div>
 
-                        </button>
+          <div class="stat-card green admin-only">
+            <div class="stat-icon">📖</div>
+            <h3 id="issuedBooks">0</h3>
+            <p>Issued Books</p>
+          </div>
 
-                    </div>
-
-                </div>
-
-                <div class="table-container">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Book ID</th>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>ISBN</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Available</th>
-                                <th class="admin-only">Action</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="booksTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">✅</div>
+            <h3 id="availableBooks">0</h3>
+            <p>Available Books</p>
+          </div>
 
         </div>
 
+        <div class="table-card">
 
-        <!-- =================================================
-             MEMBERS
-             ================================================= -->
+          <div class="page-header">
+            <div>
+              <h2>Welcome to LIBRA</h2>
+              <p style="color:#64748b;margin-top:6px;">
+                Library Management System Dashboard
+              </p>
+            </div>
+          </div>
+
+          <p style="color:#475569;line-height:1.7;">
+            LIBRA helps manage books, members, inventory and
+            library transactions efficiently through a simple
+            and colourful interface.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- BOOKS -->
+      <!-- ================================================= -->
+
+      <section
+        class="page"
+        id="page-books">
+
+        <div class="page-header">
+
+          <div>
+            <h2>📚 Books</h2>
+            <p style="color:#64748b;">
+              View and manage library books
+            </p>
+          </div>
+
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openBookModal()">
+            + Add Book
+          </button>
+
+        </div>
 
         <div
-            id="membersPage"
-            class="hidden admin-page">
+          id="bookMessage"
+          class="message">
+        </div>
 
-            <div class="section">
+        <div class="table-card">
 
-                <div class="section-header">
+          <input
+            type="text"
+            class="search-box"
+            id="bookSearch"
+            placeholder="🔍 Search books..."
+            oninput="filterBooks()">
 
-                    <h2>
-                        👨‍🎓 Members
-                    </h2>
+          <table>
 
-                    <button
-                        class="primary admin-only"
-                        onclick="openMemberModal()">
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Available</th>
+                <th>Status</th>
+                <th class="admin-only">Action</th>
+              </tr>
+            </thead>
 
-                        + Add Member
+            <tbody id="booksTableBody">
+            </tbody>
 
-                    </button>
-
-                </div>
-
-                <div class="table-container">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Student ID</th>
-                                <th>Name</th>
-                                <th>Department</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="membersTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+          </table>
 
         </div>
 
+      </section>
 
-        <!-- =================================================
-             TRANSACTIONS
-             ================================================= -->
 
-        <div
-            id="transactionsPage"
-            class="hidden admin-page">
+      <!-- ================================================= -->
+      <!-- MEMBERS -->
+      <!-- ================================================= -->
 
-            <div class="section">
+      <section
+        class="page"
+        id="page-members">
 
-                <div class="section-header">
+        <div class="page-header">
 
-                    <h2>
-                        🔄 Issue / Return
-                    </h2>
+          <div>
+            <h2>👨‍🎓 Members</h2>
+            <p style="color:#64748b;">
+              Manage library members
+            </p>
+          </div>
 
-                    <button
-                        class="primary admin-only"
-                        onclick="openIssueModal()">
-
-                        + Issue Book
-
-                    </button>
-
-                </div>
-
-                <div class="table-container">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Book</th>
-                                <th>Member</th>
-                                <th>Issue Date</th>
-                                <th>Due Date</th>
-                                <th>Return Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="transactionsTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openMemberModal()">
+            + Add Member
+          </button>
 
         </div>
 
+        <div class="table-card">
 
-        <!-- =================================================
-             INVENTORY
-             ================================================= -->
+          <input
+            type="text"
+            class="search-box"
+            id="memberSearch"
+            placeholder="🔍 Search members..."
+            oninput="filterMembers()">
 
-        <div
-            id="inventoryPage"
-            class="hidden">
+          <table>
 
-            <div class="section">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
 
-                <h2>
-                    📦 Inventory
-                </h2>
+            <tbody id="membersTableBody">
+            </tbody>
 
-                <div
-                    class="table-container"
-                    style="margin-top:20px;">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Book ID</th>
-                                <th>Title</th>
-                                <th>Total Quantity</th>
-                                <th>Available</th>
-                                <th>Issued</th>
-                                <th>Status</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody
-                            id="inventoryTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+          </table>
 
         </div>
 
+      </section>
 
-        <!-- =================================================
-             REPORTS
-             ================================================= -->
 
-        <div
-            id="reportsPage"
-            class="hidden admin-page">
+      <!-- ================================================= -->
+      <!-- TRANSACTIONS -->
+      <!-- ================================================= -->
 
-            <div class="cards">
+      <section
+        class="page"
+        id="page-transactions">
 
-                <div class="card">
+        <div class="page-header">
 
-                    <h3>
-                        Total Books
-                    </h3>
+          <div>
+            <h2>🔄 Transactions</h2>
+            <p style="color:#64748b;">
+              Issue and return library books
+            </p>
+          </div>
 
-                    <div
-                        class="number"
-                        id="reportBooks">
-                        0
-                    </div>
-
-                </div>
-
-                <div class="card">
-
-                    <h3>
-                        Total Members
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="reportMembers">
-                        0
-                    </div>
-
-                </div>
-
-                <div class="card">
-
-                    <h3>
-                        Total Transactions
-                    </h3>
-
-                    <div
-                        class="number"
-                        id="reportTransactions">
-                        0
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="section">
-
-                <h2>
-                    📊 Library Report
-                </h2>
-
-                <p
-                    style="
-                    margin-top:10px;
-                    color:#667085;">
-
-                    Quick overview of library records
-                    stored in the LIBRA database.
-
-                </p>
-
-            </div>
+          <button
+            class="btn btn-primary admin-only"
+            onclick="openIssueModal()">
+            + Issue Book
+          </button>
 
         </div>
+
+        <div class="table-card">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="transactionsTableBody">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- INVENTORY -->
+      <!-- ================================================= -->
+
+      <section
+        class="page"
+        id="page-inventory">
+
+        <div class="page-header">
+
+          <div>
+            <h2>📦 Inventory</h2>
+            <p style="color:#64748b;">
+              Current library book inventory
+            </p>
+          </div>
+
+        </div>
+
+        <div class="table-card">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Total Quantity</th>
+                <th>Available</th>
+                <th>Issued</th>
+              </tr>
+            </thead>
+
+            <tbody id="inventoryTableBody">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================================================= -->
+      <!-- REPORTS -->
+      <!-- ================================================= -->
+
+      <section
+        class="page"
+        id="page-reports">
+
+        <div class="page-header">
+
+          <div>
+            <h2>📈 Reports</h2>
+            <p style="color:#64748b;">
+              Library statistics
+            </p>
+          </div>
+
+        </div>
+
+        <div class="cards">
+
+          <div class="stat-card blue">
+            <div class="stat-icon">📚</div>
+            <h3 id="reportBooks">0</h3>
+            <p>Total Books</p>
+          </div>
+
+          <div class="stat-card purple">
+            <div class="stat-icon">👨‍🎓</div>
+            <h3 id="reportMembers">0</h3>
+            <p>Total Members</p>
+          </div>
+
+          <div class="stat-card green">
+            <div class="stat-icon">🔄</div>
+            <h3 id="reportIssued">0</h3>
+            <p>Issued Books</p>
+          </div>
+
+          <div class="stat-card orange">
+            <div class="stat-icon">✅</div>
+            <h3 id="reportAvailable">0</h3>
+            <p>Available Books</p>
+          </div>
+
+        </div>
+
+      </section>
 
     </main>
 
-</div>
-
-
-<!-- =====================================================
-     BOOK MODAL
-     ===================================================== -->
-
-<div
-    id="bookModal"
-    class="modal hidden">
-
-    <div class="modal-box">
-
-        <h2>
-            📚 Add Book
-        </h2>
-
-        <div
-            id="bookMessage"
-            class="message">
-        </div>
-
-        <input
-            id="bookId"
-            placeholder="Book ID *">
-
-        <input
-            id="bookTitle"
-            placeholder="Book Title *">
-
-        <input
-            id="bookAuthor"
-            placeholder="Author *">
-
-        <input
-            id="bookPublisher"
-            placeholder="Publisher">
-
-        <input
-            id="bookEdition"
-            placeholder="Edition">
-
-        <input
-            id="bookISBN"
-            placeholder="ISBN">
-
-        <input
-            id="bookCategory"
-            placeholder="Category">
-
-        <input
-            id="bookYear"
-            type="number"
-            placeholder="Publication Year">
-
-        <input
-            id="bookQuantity"
-            type="number"
-            min="1"
-            value="1"
-            placeholder="Quantity">
-
-        <input
-            id="bookShelf"
-            placeholder="Shelf Location">
-
-        <div class="modal-actions">
-
-            <button
-                class="secondary"
-                onclick="closeBookModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                class="primary"
-                onclick="addBook()">
-
-                Save Book
-
-            </button>
-
-        </div>
-
-    </div>
+  </div>
 
 </div>
 
 
-<!-- =====================================================
-     MEMBER MODAL
-     ===================================================== -->
+<!-- ========================================================= -->
+<!-- BOOK MODAL -->
+<!-- ========================================================= -->
 
 <div
-    id="memberModal"
-    class="modal hidden">
+  class="modal"
+  id="bookModal">
 
-    <div class="modal-box">
+  <div class="modal-content">
 
-        <h2>
-            👨‍🎓 Add Member
-        </h2>
+    <div class="modal-header">
 
-        <div
-            id="memberMessage"
-            class="message">
-        </div>
+      <h2>📚 Add New Book</h2>
 
-        <input
-            id="studentId"
-            placeholder="Student ID *">
-
-        <input
-            id="memberName"
-            placeholder="Student Name *">
-
-        <input
-            id="department"
-            placeholder="Department">
-
-        <input
-            id="memberEmail"
-            type="email"
-            placeholder="Email">
-
-        <input
-            id="memberPhone"
-            placeholder="Phone">
-
-        <div class="modal-actions">
-
-            <button
-                class="secondary"
-                onclick="closeMemberModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                class="primary"
-                onclick="addMember()">
-
-                Save Member
-
-            </button>
-
-        </div>
+      <button
+        class="close"
+        onclick="closeModal('bookModal')">
+        ×
+      </button>
 
     </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Book ID *</label>
+        <input id="bookId" placeholder="B001">
+      </div>
+
+      <div class="form-group">
+        <label>Title *</label>
+        <input id="bookTitle" placeholder="Book title">
+      </div>
+
+      <div class="form-group">
+        <label>Author *</label>
+        <input id="bookAuthor" placeholder="Author name">
+      </div>
+
+      <div class="form-group">
+        <label>Publisher</label>
+        <input id="bookPublisher">
+      </div>
+
+      <div class="form-group">
+        <label>Edition</label>
+        <input id="bookEdition">
+      </div>
+
+      <div class="form-group">
+        <label>ISBN</label>
+        <input id="bookIsbn">
+      </div>
+
+      <div class="form-group">
+        <label>Category</label>
+        <input id="bookCategory" placeholder="Computer Science">
+      </div>
+
+      <div class="form-group">
+        <label>Publication Year</label>
+        <input
+          type="number"
+          id="bookYear">
+      </div>
+
+      <div class="form-group">
+        <label>Price</label>
+        <input
+          type="number"
+          id="bookPrice">
+      </div>
+
+      <div class="form-group">
+        <label>Quantity *</label>
+        <input
+          type="number"
+          id="bookQuantity"
+          value="1"
+          min="1">
+      </div>
+
+      <div class="form-group">
+        <label>Shelf Location</label>
+        <input id="bookShelf">
+      </div>
+
+      <div class="form-group">
+        <label>Identifier</label>
+        <input id="bookIdentifier">
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeModal('bookModal')">
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="addBook()">
+        Save Book
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
 
-<!-- =====================================================
-     ISSUE MODAL
-     ===================================================== -->
+<!-- ========================================================= -->
+<!-- MEMBER MODAL -->
+<!-- ========================================================= -->
 
 <div
-    id="issueModal"
-    class="modal hidden">
+  class="modal"
+  id="memberModal">
 
-    <div class="modal-box">
+  <div class="modal-content">
 
-        <h2>
-            🔄 Issue Book
-        </h2>
+    <div class="modal-header">
 
-        <div
-            id="issueMessage"
-            class="message">
-        </div>
+      <h2>👨‍🎓 Add Member</h2>
 
-        <label>
-            Select Book
-        </label>
-
-        <select id="issueBook">
-
-            <option value="">
-                Select Book
-            </option>
-
-        </select>
-
-        <label>
-            Select Member
-        </label>
-
-        <select id="issueMember">
-
-            <option value="">
-                Select Member
-            </option>
-
-        </select>
-
-        <label>
-            Due Date
-        </label>
-
-        <input
-            id="dueDate"
-            type="date">
-
-        <div class="modal-actions">
-
-            <button
-                class="secondary"
-                onclick="closeIssueModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                class="primary"
-                onclick="issueBook()">
-
-                Issue Book
-
-            </button>
-
-        </div>
+      <button
+        class="close"
+        onclick="closeModal('memberModal')">
+        ×
+      </button>
 
     </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Student ID *</label>
+        <input
+          id="studentId"
+          placeholder="STU001">
+      </div>
+
+      <div class="form-group">
+        <label>Name *</label>
+        <input
+          id="memberName"
+          placeholder="Student name">
+      </div>
+
+      <div class="form-group">
+        <label>Department</label>
+        <input
+          id="memberDepartment"
+          placeholder="Computer Science">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          id="memberEmail">
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input
+          id="memberPhone">
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeModal('memberModal')">
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="addMember()">
+        Save Member
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ISSUE MODAL -->
+<!-- ========================================================= -->
+
+<div
+  class="modal"
+  id="issueModal">
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+
+      <h2>🔄 Issue Book</h2>
+
+      <button
+        class="close"
+        onclick="closeModal('issueModal')">
+        ×
+      </button>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Select Member *</label>
+
+      <select id="issueMember">
+        <option value="">-- Select Member --</option>
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Select Book *</label>
+
+      <select id="issueBook">
+        <option value="">-- Select Available Book --</option>
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Due Date</label>
+
+      <input
+        type="date"
+        id="dueDate">
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeModal('issueModal')">
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="issueBook()">
+        Issue Book
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-/* =====================================================
-   SUPABASE CONFIGURATION
-   ===================================================== */
+  /* ==========================================================
+     SUPABASE CONFIGURATION
+     ========================================================== */
 
-const SUPABASE_URL =
+  const SUPABASE_URL =
     "https://awovzkajeetvcglauhsq.supabase.co";
 
-/*
-   IMPORTANT:
-   Paste your own existing Supabase Publishable/Anon key here.
-*/
+  const SUPABASE_KEY =
+    "sb_publishable_yIRklzwYEJhv3A1NHG_BCA_ivcozDnI";
 
-const SUPABASE_KEY =
-    "PASTE_YOUR_EXISTING_SUPABASE_PUBLISHABLE_KEY_HERE";
-
-const supabaseClient =
+  const supabaseClient =
     supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
+      SUPABASE_URL,
+      SUPABASE_KEY
     );
 
 
-/* =====================================================
-   GLOBAL VARIABLES
-   ===================================================== */
+  /* ==========================================================
+     GLOBAL VARIABLES
+     ========================================================== */
 
-let currentUser = null;
+  let currentUser = null;
+  let currentRole = "student";
+  let loginType = "student";
 
-let currentRole = null;
-
-let loginType = "student";
-
-let books = [];
-
-let members = [];
-
-let transactions = [];
+  let books = [];
+  let members = [];
+  let transactions = [];
 
 
-/* =====================================================
-   LOGIN TYPE
-   ===================================================== */
+  /* ==========================================================
+     LOGIN TYPE
+     ========================================================== */
 
-function selectLoginType(type) {
+  function selectLoginType(type) {
 
     loginType = type;
 
     document
-        .getElementById("studentTab")
-        .classList
-        .toggle(
-            "active",
-            type === "student"
-        );
+      .getElementById("studentTab")
+      .classList
+      .toggle("active", type === "student");
 
     document
-        .getElementById("adminTab")
-        .classList
-        .toggle(
-            "active",
-            type === "admin"
-        );
-}
+      .getElementById("adminTab")
+      .classList
+      .toggle("active", type === "admin");
+
+    document.getElementById("loginMessage").innerHTML = "";
+
+  }
 
 
-/* =====================================================
-   GET USER ROLE
-   ===================================================== */
+  /* ==========================================================
+     LOGIN
+     ========================================================== */
 
-async function getUserRole() {
-
-    if (!currentUser) {
-        return null;
-    }
-
-    const { data, error } =
-        await supabaseClient
-            .from("profiles")
-            .select("role, full_name")
-            .eq("id", currentUser.id)
-            .single();
-
-    if (error) {
-
-        console.error(
-            "Profile role error:",
-            error
-        );
-
-        return null;
-    }
-
-    currentRole = data.role;
-
-    return data.role;
-}
-
-
-/* =====================================================
-   APPLY ROLE PERMISSIONS
-   ===================================================== */
-
-function applyRolePermissions() {
-
-    const adminElements =
-        document.querySelectorAll(
-            ".admin-only"
-        );
-
-    adminElements.forEach(element => {
-
-        if (currentRole === "admin") {
-
-            element.classList.remove(
-                "hidden"
-            );
-
-        } else {
-
-            element.classList.add(
-                "hidden"
-            );
-        }
-
-    });
-
-    const roleBadge =
-        document.getElementById(
-            "userRoleBadge"
-        );
-
-    if (currentRole === "admin") {
-
-        roleBadge.textContent =
-            "ADMIN";
-
-        roleBadge.className =
-            "role-badge role-admin";
-
-    } else {
-
-        roleBadge.textContent =
-            "STUDENT";
-
-        roleBadge.className =
-            "role-badge role-student";
-    }
-}
-
-
-/* =====================================================
-   LOGIN
-   ===================================================== */
-
-async function login() {
+  async function loginUser() {
 
     const email =
-        document
-            .getElementById("loginEmail")
-            .value
-            .trim();
+      document.getElementById("loginEmail").value.trim();
 
     const password =
-        document
-            .getElementById("loginPassword")
-            .value;
+      document.getElementById("loginPassword").value;
+
+    const message =
+      document.getElementById("loginMessage");
 
     if (!email || !password) {
 
-        showMessage(
-            "loginMessage",
-            "Please enter email and password.",
-            "error"
-        );
+      message.style.color = "#dc2626";
+      message.textContent =
+        "Please enter email and password.";
 
-        return;
+      return;
     }
 
+    message.style.color = "#475569";
+    message.textContent = "Logging in...";
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      currentUser = data.user;
+
+      const role =
+        await getUserRole(currentUser.id);
+
+      if (!role) {
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+          "Profile not found for this user."
+        );
+      }
+
+      if (loginType === "admin" && role !== "admin") {
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+          "This account is not an Admin account."
+        );
+      }
+
+      if (loginType === "student" && role !== "student") {
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+          "Please use Admin Login for this account."
+        );
+      }
+
+      currentRole = role;
+
+      document
+        .getElementById("loginPage")
+        .style.display = "none";
+
+      document
+        .getElementById("app")
+        .style.display = "block";
+
+      applyRolePermissions();
+
+      await loadAllData();
+
+      showPage("dashboard");
+
+    } catch (error) {
+
+      console.error(error);
+
+      message.style.color = "#dc2626";
+      message.textContent =
+        error.message || "Login failed.";
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     GET USER ROLE
+     ========================================================== */
+
+  async function getUserRole(userId) {
 
     const { data, error } =
-        await supabaseClient.auth
-            .signInWithPassword({
-
-                email: email,
-
-                password: password
-
-            });
-
+      await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
 
     if (error) {
 
-        showMessage(
-            "loginMessage",
-            error.message,
-            "error"
-        );
+      console.error("Role error:", error);
 
-        return;
+      return null;
     }
 
+    return data.role;
 
-    currentUser = data.user;
-
-
-    const role =
-        await getUserRole();
+  }
 
 
-    if (!role) {
+  /* ==========================================================
+     APPLY ROLE PERMISSIONS
+     ========================================================== */
 
-        await supabaseClient.auth.signOut();
+  function applyRolePermissions() {
 
-        showMessage(
-            "loginMessage",
-            "Your profile was not found. Please contact admin.",
-            "error"
-        );
+    const adminElements =
+      document.querySelectorAll(".admin-only");
 
-        return;
-    }
+    adminElements.forEach(element => {
 
+      if (currentRole === "admin") {
 
-    /* CHECK LOGIN TYPE */
+        element.classList.remove("hidden");
 
-    if (
-        loginType === "admin" &&
-        role !== "admin"
-    ) {
+      } else {
 
-        await supabaseClient.auth.signOut();
+        element.classList.add("hidden");
 
-        showMessage(
-            "loginMessage",
-            "This account is not an Admin account.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    if (
-        loginType === "student" &&
-        role !== "student"
-    ) {
-
-        await supabaseClient.auth.signOut();
-
-        showMessage(
-            "loginMessage",
-            "Please use Admin Login for this account.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    /* OPEN APP */
-
-    document
-        .getElementById("loginPage")
-        .classList
-        .add("hidden");
-
-    document
-        .getElementById("app")
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById("userEmail")
-        .textContent =
-        currentUser.email;
-
-
-    applyRolePermissions();
-
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   LOGOUT
-   ===================================================== */
-
-async function logout() {
-
-    await supabaseClient.auth.signOut();
-
-    currentUser = null;
-
-    currentRole = null;
-
-    document
-        .getElementById("app")
-        .classList
-        .add("hidden");
-
-    document
-        .getElementById("loginPage")
-        .classList
-        .remove("hidden");
-
-    document
-        .getElementById("loginEmail")
-        .value = "";
-
-    document
-        .getElementById("loginPassword")
-        .value = "";
-
-}
-
-
-/* =====================================================
-   NAVIGATION
-   ===================================================== */
-
-function showPage(page, button) {
-
-    /* BLOCK ADMIN PAGES */
-
-    const adminPages = [
-        "members",
-        "transactions",
-        "reports"
-    ];
-
-    if (
-        adminPages.includes(page) &&
-        currentRole !== "admin"
-    ) {
-
-        alert(
-            "Only Admin can access this section."
-        );
-
-        return;
-    }
-
-
-    const pages = [
-        "dashboard",
-        "books",
-        "members",
-        "transactions",
-        "inventory",
-        "reports"
-    ];
-
-
-    pages.forEach(p => {
-
-        const pageElement =
-            document.getElementById(
-                p + "Page"
-            );
-
-        if (pageElement) {
-
-            pageElement
-                .classList
-                .add("hidden");
-        }
+      }
 
     });
 
-
-    document
-        .getElementById(
-            page + "Page"
-        )
-        .classList
-        .remove("hidden");
-
-
-    document
-        .querySelectorAll(".nav-btn")
-        .forEach(btn =>
-            btn.classList.remove("active")
-        );
-
-
-    if (button) {
-
-        button.classList.add("active");
-    }
-
-
-    const titles = {
-
-        dashboard: "Dashboard",
-
-        books: "Books",
-
-        members: "Members",
-
-        transactions: "Issue / Return",
-
-        inventory: "Inventory",
-
-        reports: "Reports"
-
-    };
-
-
-    document
-        .getElementById("pageTitle")
-        .textContent =
-        titles[page];
-
-}
-
-
-/* =====================================================
-   LOAD ALL DATA
-   ===================================================== */
-
-async function loadAllData() {
-
-    await loadBooks();
-
+    const badge =
+      document.getElementById("roleBadge");
 
     if (currentRole === "admin") {
 
-        await loadMembers();
-
-        await loadTransactions();
+      badge.textContent = "👑 Admin";
 
     } else {
 
-        members = [];
-
-        transactions = [];
+      badge.textContent = "🎓 Student";
 
     }
 
+    const welcome =
+      document.getElementById("welcomeText");
+
+    welcome.textContent =
+      currentRole === "admin"
+        ? "Welcome Admin! Manage your library."
+        : "Welcome Student! Explore the library.";
+
+  }
+
+
+  /* ==========================================================
+     LOAD ALL DATA
+     ========================================================== */
+
+  async function loadAllData() {
+
+    await loadBooks();
+
+    if (currentRole === "admin") {
+
+      await loadMembers();
+      await loadTransactions();
+
+    } else {
+
+      members = [];
+      transactions = [];
+
+    }
 
     updateDashboard();
+    updateInventory();
+    updateReports();
 
-    renderInventory();
-
-    renderReports();
-
-}
+  }
 
 
-/* =====================================================
-   LOAD BOOKS
-   ===================================================== */
+  /* ==========================================================
+     LOAD BOOKS
+     ========================================================== */
 
-async function loadBooks() {
+  async function loadBooks() {
 
     const { data, error } =
-        await supabaseClient
-            .from("books")
-            .select("*")
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            );
-
+      await supabaseClient
+        .from("books")
+        .select("*")
+        .order("id", { ascending: false });
 
     if (error) {
 
-        console.error(error);
+      console.error("Books error:", error);
 
-        showMessage(
-            "loginMessage",
-            "Books load error: " +
-            error.message,
-            "error"
-        );
+      showMessage(
+        "bookMessage",
+        error.message,
+        "error"
+      );
 
-        return;
+      return;
     }
-
 
     books = data || [];
 
     renderBooks();
 
-}
+  }
 
 
-/* =====================================================
-   RENDER BOOKS
-   ===================================================== */
+  /* ==========================================================
+     LOAD MEMBERS
+     ========================================================== */
 
-function renderBooks() {
-
-    const table =
-        document.getElementById(
-            "booksTable"
-        );
-
-    table.innerHTML = "";
-
-
-    books.forEach(book => {
-
-        const status =
-            Number(
-                book.available_quantity
-            ) > 0
-
-            ?
-
-            `<span class="badge available">
-                Available
-            </span>`
-
-            :
-
-            `<span class="badge issued">
-                Not Available
-            </span>`;
-
-
-        const action =
-            currentRole === "admin"
-
-            ?
-
-            `<td>
-                <button
-                    class="danger"
-                    onclick="deleteBook(${book.id})">
-
-                    Delete
-
-                </button>
-            </td>`
-
-            :
-
-            "";
-
-
-        table.innerHTML += `
-
-            <tr>
-
-                <td>
-                    ${escapeHTML(book.book_id)}
-                </td>
-
-                <td>
-                    ${escapeHTML(book.title)}
-                </td>
-
-                <td>
-                    ${escapeHTML(book.author)}
-                </td>
-
-                <td>
-                    ${escapeHTML(book.isbn || "-")}
-                </td>
-
-                <td>
-                    ${escapeHTML(book.category || "-")}
-                </td>
-
-                <td>
-                    ${book.quantity}
-                </td>
-
-                <td>
-                    ${book.available_quantity}
-                    ${status}
-                </td>
-
-                ${action}
-
-            </tr>
-
-        `;
-
-    });
-
-}
-
-
-/* =====================================================
-   FILTER BOOKS
-   ===================================================== */
-
-function filterBooks() {
-
-    const search =
-        document
-            .getElementById("bookSearch")
-            .value
-            .toLowerCase();
-
-
-    const table =
-        document.getElementById(
-            "booksTable"
-        );
-
-    table.innerHTML = "";
-
-
-    books
-        .filter(book =>
-
-            String(
-                book.title || ""
-            )
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            String(
-                book.author || ""
-            )
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            String(
-                book.isbn || ""
-            )
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            String(
-                book.book_id || ""
-            )
-            .toLowerCase()
-            .includes(search)
-
-        )
-        .forEach(book => {
-
-            const status =
-                book.available_quantity > 0
-
-                ?
-
-                `<span class="badge available">
-                    Available
-                </span>`
-
-                :
-
-                `<span class="badge issued">
-                    Not Available
-                </span>`;
-
-
-            const action =
-                currentRole === "admin"
-
-                ?
-
-                `<td>
-                    <button
-                        class="danger"
-                        onclick="deleteBook(${book.id})">
-
-                        Delete
-
-                    </button>
-                </td>`
-
-                :
-
-                "";
-
-
-            table.innerHTML += `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(book.book_id)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(book.title)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(book.author)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(book.isbn || "-")}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(book.category || "-")}
-                    </td>
-
-                    <td>
-                        ${book.quantity}
-                    </td>
-
-                    <td>
-                        ${book.available_quantity}
-                        ${status}
-                    </td>
-
-                    ${action}
-
-                </tr>
-
-            `;
-
-        });
-
-}
-
-
-/* =====================================================
-   ADD BOOK - ADMIN ONLY
-   ===================================================== */
-
-async function addBook() {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can add books."
-        );
-
-        return;
-    }
-
-
-    const quantity =
-        Number(
-            document
-                .getElementById("bookQuantity")
-                .value
-        ) || 1;
-
-
-    const book = {
-
-        book_id:
-            document
-                .getElementById("bookId")
-                .value
-                .trim(),
-
-        title:
-            document
-                .getElementById("bookTitle")
-                .value
-                .trim(),
-
-        author:
-            document
-                .getElementById("bookAuthor")
-                .value
-                .trim(),
-
-        publisher:
-            document
-                .getElementById("bookPublisher")
-                .value
-                .trim(),
-
-        edition:
-            document
-                .getElementById("bookEdition")
-                .value
-                .trim(),
-
-        isbn:
-            document
-                .getElementById("bookISBN")
-                .value
-                .trim()
-            || null,
-
-        category:
-            document
-                .getElementById("bookCategory")
-                .value
-                .trim(),
-
-        publication_year:
-            Number(
-                document
-                    .getElementById("bookYear")
-                    .value
-            ) || null,
-
-        quantity:
-            quantity,
-
-        available_quantity:
-            quantity,
-
-        shelf_location:
-            document
-                .getElementById("bookShelf")
-                .value
-                .trim()
-
-    };
-
-
-    if (
-        !book.book_id ||
-        !book.title ||
-        !book.author
-    ) {
-
-        showMessage(
-            "bookMessage",
-            "Book ID, Title and Author are required.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    const { error } =
-        await supabaseClient
-            .from("books")
-            .insert(book);
-
-
-    if (error) {
-
-        showMessage(
-            "bookMessage",
-            error.message,
-            "error"
-        );
-
-        return;
-    }
-
-
-    closeBookModal();
-
-    clearBookForm();
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   DELETE BOOK - ADMIN ONLY
-   ===================================================== */
-
-async function deleteBook(id) {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can delete books."
-        );
-
-        return;
-    }
-
-
-    if (
-        !confirm(
-            "Delete this book?"
-        )
-    ) {
-
-        return;
-    }
-
-
-    const { error } =
-        await supabaseClient
-            .from("books")
-            .delete()
-            .eq("id", id);
-
-
-    if (error) {
-
-        alert(
-            error.message
-        );
-
-        return;
-    }
-
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   LOAD MEMBERS - ADMIN
-   ===================================================== */
-
-async function loadMembers() {
-
-    if (currentRole !== "admin") {
-
-        return;
-    }
-
+  async function loadMembers() {
 
     const { data, error } =
-        await supabaseClient
-            .from("members")
-            .select("*")
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            );
-
+      await supabaseClient
+        .from("members")
+        .select("*")
+        .order("id", { ascending: false });
 
     if (error) {
 
-        console.error(error);
+      console.error("Members error:", error);
 
-        return;
+      return;
     }
-
 
     members = data || [];
 
     renderMembers();
 
-}
+    populateIssueMembers();
+
+  }
 
 
-/* =====================================================
-   RENDER MEMBERS
-   ===================================================== */
+  /* ==========================================================
+     LOAD TRANSACTIONS
+     ========================================================== */
 
-function renderMembers() {
-
-    const table =
-        document.getElementById(
-            "membersTable"
-        );
-
-    table.innerHTML = "";
-
-
-    members.forEach(member => {
-
-        table.innerHTML += `
-
-            <tr>
-
-                <td>
-                    ${escapeHTML(
-                        member.student_id
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        member.name
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        member.department || "-"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        member.email || "-"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        member.phone || "-"
-                    )}
-                </td>
-
-                <td>
-
-                    <span
-                        class="badge available">
-
-                        ${escapeHTML(
-                            member.status
-                        )}
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        `;
-
-    });
-
-}
-
-
-/* =====================================================
-   ADD MEMBER - ADMIN ONLY
-   ===================================================== */
-
-async function addMember() {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can add members."
-        );
-
-        return;
-    }
-
-
-    const member = {
-
-        student_id:
-            document
-                .getElementById("studentId")
-                .value
-                .trim(),
-
-        name:
-            document
-                .getElementById("memberName")
-                .value
-                .trim(),
-
-        department:
-            document
-                .getElementById("department")
-                .value
-                .trim(),
-
-        email:
-            document
-                .getElementById("memberEmail")
-                .value
-                .trim(),
-
-        phone:
-            document
-                .getElementById("memberPhone")
-                .value
-                .trim(),
-
-        status:
-            "Active"
-
-    };
-
-
-    if (
-        !member.student_id ||
-        !member.name
-    ) {
-
-        showMessage(
-            "memberMessage",
-            "Student ID and Name are required.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    const { error } =
-        await supabaseClient
-            .from("members")
-            .insert(member);
-
-
-    if (error) {
-
-        showMessage(
-            "memberMessage",
-            error.message,
-            "error"
-        );
-
-        return;
-    }
-
-
-    closeMemberModal();
-
-    clearMemberForm();
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   LOAD TRANSACTIONS - ADMIN
-   ===================================================== */
-
-async function loadTransactions() {
-
-    if (currentRole !== "admin") {
-
-        return;
-    }
-
+  async function loadTransactions() {
 
     const { data, error } =
-        await supabaseClient
-            .from("transactions")
-            .select(`
-                *,
-                books(title),
-                members(name, student_id)
-            `)
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            );
-
+      await supabaseClient
+        .from("transactions")
+        .select(`
+          *,
+          members (
+            student_id,
+            name
+          ),
+          books (
+            book_id,
+            title
+          )
+        `)
+        .order("id", { ascending: false });
 
     if (error) {
 
-        console.error(error);
+      console.error(
+        "Transactions error:",
+        error
+      );
 
-        return;
+      return;
     }
-
 
     transactions = data || [];
 
     renderTransactions();
 
-}
+  }
 
 
-/* =====================================================
-   RENDER TRANSACTIONS
-   ===================================================== */
+  /* ==========================================================
+     RENDER BOOKS
+     ========================================================== */
 
-function renderTransactions() {
+  function renderBooks(list = books) {
 
-    const table =
-        document.getElementById(
-            "transactionsTable"
-        );
+    const tbody =
+      document.getElementById(
+        "booksTableBody"
+      );
 
-    table.innerHTML = "";
+    tbody.innerHTML = "";
 
+    if (!list.length) {
 
-    transactions.forEach(transaction => {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8"
+              style="text-align:center;color:#64748b;">
+            No books found.
+          </td>
+        </tr>
+      `;
 
-        const action =
-            transaction.status === "Issued"
+      populateIssueBooks();
 
-            ?
+      return;
+    }
 
-            `<button
-                class="primary"
-                onclick="returnBook(
-                    ${transaction.id},
-                    ${transaction.book_id}
-                )">
+    list.forEach(book => {
 
-                Return
+      const available =
+        Number(book.available_quantity || 0);
 
-            </button>`
+      const status =
+        available > 0
+          ? `<span class="badge badge-green">Available</span>`
+          : `<span class="badge badge-red">Unavailable</span>`;
 
-            :
+      const action =
+        currentRole === "admin"
+          ? `
+            <button
+              class="btn btn-danger"
+              onclick="deleteBook(${book.id})">
+              Delete
+            </button>
+          `
+          : "-";
 
-            "-";
+      tbody.innerHTML += `
 
+        <tr>
 
-        table.innerHTML += `
+          <td>${escapeHtml(book.book_id)}</td>
 
-            <tr>
+          <td>${escapeHtml(book.title)}</td>
 
-                <td>
-                    ${escapeHTML(
-                        transaction.books?.title || "-"
-                    )}
-                </td>
+          <td>${escapeHtml(book.author)}</td>
 
-                <td>
-                    ${escapeHTML(
-                        transaction.members?.name || "-"
-                    )}
-                </td>
+          <td>${escapeHtml(book.category || "-")}</td>
 
-                <td>
-                    ${transaction.issue_date || "-"}
-                </td>
+          <td>${book.quantity || 0}</td>
 
-                <td>
-                    ${transaction.due_date || "-"}
-                </td>
+          <td>${book.available_quantity || 0}</td>
 
-                <td>
-                    ${transaction.return_date || "-"}
-                </td>
+          <td>${status}</td>
 
-                <td>
+          <td class="admin-only">
+            ${action}
+          </td>
 
-                    <span
-                        class="badge ${
-                            transaction.status === "Issued"
-                            ? "issued"
-                            : "available"
-                        }">
+        </tr>
 
-                        ${escapeHTML(
-                            transaction.status
-                        )}
-
-                    </span>
-
-                </td>
-
-                <td>
-                    ${action}
-                </td>
-
-            </tr>
-
-        `;
+      `;
 
     });
 
-}
+    populateIssueBooks();
+
+  }
 
 
-/* =====================================================
-   ISSUE BOOK - ADMIN ONLY
-   ===================================================== */
+  /* ==========================================================
+     ADD BOOK
+     ========================================================== */
 
-async function issueBook() {
+  async function addBook() {
 
     if (currentRole !== "admin") {
 
-        alert(
-            "Only Admin can issue books."
-        );
+      alert("Only Admin can add books.");
 
-        return;
+      return;
     }
-
 
     const bookId =
-        Number(
-            document
-                .getElementById("issueBook")
-                .value
-        );
+      document.getElementById("bookId").value.trim();
+
+    const title =
+      document.getElementById("bookTitle").value.trim();
+
+    const author =
+      document.getElementById("bookAuthor").value.trim();
+
+    const publisher =
+      document.getElementById("bookPublisher").value.trim();
+
+    const edition =
+      document.getElementById("bookEdition").value.trim();
+
+    const isbn =
+      document.getElementById("bookIsbn").value.trim();
+
+    const category =
+      document.getElementById("bookCategory").value.trim();
+
+    const year =
+      document.getElementById("bookYear").value;
+
+    const price =
+      document.getElementById("bookPrice").value;
+
+    const quantity =
+      Number(
+        document.getElementById("bookQuantity").value
+      );
+
+    const shelf =
+      document.getElementById("bookShelf").value.trim();
+
+    const identifier =
+      document.getElementById("bookIdentifier").value.trim();
 
 
-    const memberId =
-        Number(
-            document
-                .getElementById("issueMember")
-                .value
-        );
+    if (!bookId || !title || !author || !quantity) {
 
+      alert(
+        "Please fill Book ID, Title, Author and Quantity."
+      );
 
-    const dueDate =
-        document
-            .getElementById("dueDate")
-            .value;
-
-
-    if (
-        !bookId ||
-        !memberId ||
-        !dueDate
-    ) {
-
-        showMessage(
-            "issueMessage",
-            "Please select book, member and due date.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    const book =
-        books.find(
-            b => b.id === bookId
-        );
-
-
-    if (
-        !book ||
-        Number(
-            book.available_quantity
-        ) <= 0
-    ) {
-
-        showMessage(
-            "issueMessage",
-            "This book is not available.",
-            "error"
-        );
-
-        return;
+      return;
     }
 
 
     const { error } =
-        await supabaseClient
-            .from("transactions")
-            .insert({
-
-                member_id:
-                    memberId,
-
-                book_id:
-                    bookId,
-
-                issue_date:
-                    new Date()
-                        .toISOString()
-                        .split("T")[0],
-
-                due_date:
-                    dueDate,
-
-                status:
-                    "Issued"
-
-            });
-
-
-    if (error) {
-
-        showMessage(
-            "issueMessage",
-            error.message,
-            "error"
-        );
-
-        return;
-    }
-
-
-    const { error: updateError } =
-        await supabaseClient
-            .from("books")
-            .update({
-
-                available_quantity:
-                    Number(
-                        book.available_quantity
-                    ) - 1
-
-            })
-            .eq(
-                "id",
-                bookId
-            );
-
-
-    if (updateError) {
-
-        alert(
-            "Book issued but quantity update failed: " +
-            updateError.message
-        );
-
-        return;
-    }
-
-
-    closeIssueModal();
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   RETURN BOOK - ADMIN ONLY
-   ===================================================== */
-
-async function returnBook(
-    transactionId,
-    bookId
-) {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can return books."
-        );
-
-        return;
-    }
-
-
-    if (
-        !confirm(
-            "Return this book?"
-        )
-    ) {
-
-        return;
-    }
-
-
-    const { error } =
-        await supabaseClient
-            .from("transactions")
-            .update({
-
-                return_date:
-                    new Date()
-                        .toISOString()
-                        .split("T")[0],
-
-                status:
-                    "Returned"
-
-            })
-            .eq(
-                "id",
-                transactionId
-            );
-
-
-    if (error) {
-
-        alert(
-            error.message
-        );
-
-        return;
-    }
-
-
-    const book =
-        books.find(
-            b => b.id === bookId
-        );
-
-
-    if (book) {
-
-        const newAvailable =
-            Math.min(
-                Number(book.available_quantity) + 1,
-                Number(book.quantity)
-            );
-
-
-        await supabaseClient
-            .from("books")
-            .update({
-
-                available_quantity:
-                    newAvailable
-
-            })
-            .eq(
-                "id",
-                bookId
-            );
-
-    }
-
-
-    await loadAllData();
-
-}
-
-
-/* =====================================================
-   INVENTORY
-   ===================================================== */
-
-function renderInventory() {
-
-    const table =
-        document.getElementById(
-            "inventoryTable"
-        );
-
-    table.innerHTML = "";
-
-
-    books.forEach(book => {
-
-        const issued =
-            Number(book.quantity) -
-            Number(book.available_quantity);
-
-
-        const status =
-            Number(
-                book.available_quantity
-            ) > 0
-
-            ?
-
-            "Available"
-
-            :
-
-            "Out of Stock";
-
-
-        table.innerHTML += `
-
-            <tr>
-
-                <td>
-                    ${escapeHTML(
-                        book.book_id
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHTML(
-                        book.title
-                    )}
-                </td>
-
-                <td>
-                    ${book.quantity}
-                </td>
-
-                <td>
-                    ${book.available_quantity}
-                </td>
-
-                <td>
-                    ${issued}
-                </td>
-
-                <td>
-
-                    <span
-                        class="badge ${
-                            book.available_quantity > 0
-                            ? "available"
-                            : "issued"
-                        }">
-
-                        ${status}
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        `;
-
-    });
-
-}
-
-
-/* =====================================================
-   DASHBOARD
-   ===================================================== */
-
-function updateDashboard() {
-
-    const totalBooks =
-        books.reduce(
-            (sum, book) =>
-                sum +
-                Number(
-                    book.quantity || 0
-                ),
-            0
-        );
-
-
-    const availableBooks =
-        books.reduce(
-            (sum, book) =>
-                sum +
-                Number(
-                    book.available_quantity || 0
-                ),
-            0
-        );
-
-
-    const issuedBooks =
-        totalBooks -
-        availableBooks;
-
-
-    document
-        .getElementById("totalBooks")
-        .textContent =
-        totalBooks;
-
-
-    document
-        .getElementById("totalMembers")
-        .textContent =
-        members.length;
-
-
-    document
-        .getElementById("availableBooks")
-        .textContent =
-        availableBooks;
-
-
-    document
-        .getElementById("issuedBooks")
-        .textContent =
-        issuedBooks;
-
-}
-
-
-/* =====================================================
-   REPORTS
-   ===================================================== */
-
-function renderReports() {
-
-    document
-        .getElementById("reportBooks")
-        .textContent =
-        books.length;
-
-
-    document
-        .getElementById("reportMembers")
-        .textContent =
-        members.length;
-
-
-    document
-        .getElementById("reportTransactions")
-        .textContent =
-        transactions.length;
-
-}
-
-
-/* =====================================================
-   BOOK MODAL
-   ===================================================== */
-
-function openBookModal() {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can add books."
-        );
-
-        return;
-    }
-
-
-    document
-        .getElementById("bookModal")
-        .classList
-        .remove("hidden");
-
-}
-
-
-function closeBookModal() {
-
-    document
-        .getElementById("bookModal")
-        .classList
-        .add("hidden");
-
-}
-
-
-/* =====================================================
-   MEMBER MODAL
-   ===================================================== */
-
-function openMemberModal() {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can add members."
-        );
-
-        return;
-    }
-
-
-    document
-        .getElementById("memberModal")
-        .classList
-        .remove("hidden");
-
-}
-
-
-function closeMemberModal() {
-
-    document
-        .getElementById("memberModal")
-        .classList
-        .add("hidden");
-
-}
-
-
-/* =====================================================
-   ISSUE MODAL
-   ===================================================== */
-
-function openIssueModal() {
-
-    if (currentRole !== "admin") {
-
-        alert(
-            "Only Admin can issue books."
-        );
-
-        return;
-    }
-
-
-    const bookSelect =
-        document.getElementById(
-            "issueBook"
-        );
-
-
-    const memberSelect =
-        document.getElementById(
-            "issueMember"
-        );
-
-
-    bookSelect.innerHTML =
-        `
-        <option value="">
-            Select Book
-        </option>
-        `;
-
-
-    memberSelect.innerHTML =
-        `
-        <option value="">
-            Select Member
-        </option>
-        `;
-
-
-    books
-        .filter(
-            book =>
-                Number(
-                    book.available_quantity
-                ) > 0
-        )
-        .forEach(book => {
-
-            bookSelect.innerHTML += `
-
-                <option value="${book.id}">
-
-                    ${escapeHTML(
-                        book.title
-                    )}
-
-                    - Available:
-                    ${book.available_quantity}
-
-                </option>
-
-            `;
+      await supabaseClient
+        .from("books")
+        .insert({
+
+          book_id: bookId,
+          title: title,
+          author: author,
+          publisher: publisher || null,
+          edition: edition || null,
+          isbn: isbn || null,
+          category: category || null,
+          publication_year:
+            year ? Number(year) : null,
+          price:
+            price ? Number(price) : null,
+          quantity: quantity,
+          available_quantity: quantity,
+          shelf_location: shelf || null,
+          identifier: identifier || null
 
         });
 
 
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "Book could not be saved:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    alert("Book saved successfully!");
+
+
+    closeModal("bookModal");
+
+    clearBookForm();
+
+    await loadBooks();
+
+    updateDashboard();
+    updateInventory();
+    updateReports();
+
+  }
+
+
+  /* ==========================================================
+     DELETE BOOK
+     ========================================================== */
+
+  async function deleteBook(id) {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can delete books.");
+
+      return;
+    }
+
+    const confirmDelete =
+      confirm(
+        "Are you sure you want to delete this book?"
+      );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+
+    const { error } =
+      await supabaseClient
+        .from("books")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+      alert(
+        "Delete failed:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    alert("Book deleted successfully.");
+
+    await loadBooks();
+
+    updateDashboard();
+    updateInventory();
+    updateReports();
+
+  }
+
+
+  /* ==========================================================
+     RENDER MEMBERS
+     ========================================================== */
+
+  function renderMembers(list = members) {
+
+    const tbody =
+      document.getElementById(
+        "membersTableBody"
+      );
+
+    tbody.innerHTML = "";
+
+    if (!list.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7"
+              style="text-align:center;color:#64748b;">
+            No members found.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    list.forEach(member => {
+
+      tbody.innerHTML += `
+
+        <tr>
+
+          <td>${escapeHtml(member.student_id)}</td>
+
+          <td>${escapeHtml(member.name)}</td>
+
+          <td>${escapeHtml(member.department || "-")}</td>
+
+          <td>${escapeHtml(member.email || "-")}</td>
+
+          <td>${escapeHtml(member.phone || "-")}</td>
+
+          <td>
+            <span class="badge badge-green">
+              ${escapeHtml(member.status || "Active")}
+            </span>
+          </td>
+
+          <td>
+
+            <button
+              class="btn btn-danger"
+              onclick="deleteMember(${member.id})">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    });
+
+  }
+
+
+  /* ==========================================================
+     ADD MEMBER
+     ========================================================== */
+
+  async function addMember() {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can add members.");
+
+      return;
+    }
+
+    const studentId =
+      document.getElementById("studentId")
+        .value.trim();
+
+    const name =
+      document.getElementById("memberName")
+        .value.trim();
+
+    const department =
+      document.getElementById("memberDepartment")
+        .value.trim();
+
+    const email =
+      document.getElementById("memberEmail")
+        .value.trim();
+
+    const phone =
+      document.getElementById("memberPhone")
+        .value.trim();
+
+
+    if (!studentId || !name) {
+
+      alert(
+        "Please enter Student ID and Name."
+      );
+
+      return;
+    }
+
+
+    const { error } =
+      await supabaseClient
+        .from("members")
+        .insert({
+
+          student_id: studentId,
+          name: name,
+          department: department || null,
+          email: email || null,
+          phone: phone || null,
+          status: "Active"
+
+        });
+
+
+    if (error) {
+
+      alert(
+        "Member could not be saved:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    alert("Member saved successfully!");
+
+    closeModal("memberModal");
+
+    clearMemberForm();
+
+    await loadMembers();
+
+    updateDashboard();
+    updateReports();
+
+  }
+
+
+  /* ==========================================================
+     DELETE MEMBER
+     ========================================================== */
+
+  async function deleteMember(id) {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can delete members.");
+
+      return;
+    }
+
+
+    const confirmDelete =
+      confirm(
+        "Are you sure you want to delete this member?"
+      );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+
+    const { error } =
+      await supabaseClient
+        .from("members")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+      alert(
+        "Delete failed:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    alert("Member deleted successfully.");
+
+    await loadMembers();
+
+    updateDashboard();
+    updateReports();
+
+  }
+
+
+  /* ==========================================================
+     POPULATE ISSUE MEMBERS
+     ========================================================== */
+
+  function populateIssueMembers() {
+
+    const select =
+      document.getElementById("issueMember");
+
+    if (!select) return;
+
+    select.innerHTML =
+      `<option value="">-- Select Member --</option>`;
+
     members.forEach(member => {
 
-        memberSelect.innerHTML += `
+      select.innerHTML += `
 
-            <option value="${member.id}">
+        <option value="${member.id}">
+          ${escapeHtml(member.student_id)}
+          - ${escapeHtml(member.name)}
+        </option>
 
-                ${escapeHTML(
-                    member.name
-                )}
+      `;
 
-                (${escapeHTML(
-                    member.student_id
-                )})
+    });
 
-            </option>
+  }
+
+
+  /* ==========================================================
+     POPULATE ISSUE BOOKS
+     ========================================================== */
+
+  function populateIssueBooks() {
+
+    const select =
+      document.getElementById("issueBook");
+
+    if (!select) return;
+
+    select.innerHTML =
+      `<option value="">-- Select Available Book --</option>`;
+
+
+    books
+      .filter(book =>
+        Number(book.available_quantity || 0) > 0
+      )
+      .forEach(book => {
+
+        select.innerHTML += `
+
+          <option value="${book.id}">
+            ${escapeHtml(book.book_id)}
+            - ${escapeHtml(book.title)}
+            (${book.available_quantity} available)
+          </option>
 
         `;
 
-    });
+      });
+
+  }
 
 
-    document
-        .getElementById("issueModal")
-        .classList
-        .remove("hidden");
+  /* ==========================================================
+     ISSUE BOOK
+     ========================================================== */
 
-}
+  async function issueBook() {
 
+    if (currentRole !== "admin") {
 
-function closeIssueModal() {
+      alert("Only Admin can issue books.");
 
-    document
-        .getElementById("issueModal")
-        .classList
-        .add("hidden");
-
-}
-
-
-/* =====================================================
-   CLEAR FORMS
-   ===================================================== */
-
-function clearBookForm() {
-
-    const ids = [
-
-        "bookId",
-        "bookTitle",
-        "bookAuthor",
-        "bookPublisher",
-        "bookEdition",
-        "bookISBN",
-        "bookCategory",
-        "bookYear",
-        "bookShelf"
-
-    ];
-
-
-    ids.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-
-            element.value = "";
-
-        }
-
-    });
-
-
-    document
-        .getElementById("bookQuantity")
-        .value = 1;
-
-}
-
-
-function clearMemberForm() {
-
-    const ids = [
-
-        "studentId",
-        "memberName",
-        "department",
-        "memberEmail",
-        "memberPhone"
-
-    ];
-
-
-    ids.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-
-            element.value = "";
-
-        }
-
-    });
-
-}
-
-
-/* =====================================================
-   MESSAGE
-   ===================================================== */
-
-function showMessage(
-    id,
-    text,
-    type
-) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (!element) {
-
-        alert(text);
-
-        return;
+      return;
     }
 
 
-    element.textContent =
-        text;
+    const memberId =
+      document.getElementById("issueMember").value;
+
+    const bookId =
+      document.getElementById("issueBook").value;
+
+    const dueDate =
+      document.getElementById("dueDate").value;
 
 
-    element.className =
-        "message " +
-        type;
+    if (!memberId || !bookId) {
+
+      alert(
+        "Please select a member and a book."
+      );
+
+      return;
+    }
 
 
-    element.style.display =
-        "block";
+    const selectedBook =
+      books.find(
+        book => String(book.id) === String(bookId)
+      );
 
 
-    setTimeout(() => {
+    if (!selectedBook) {
 
-        element.style.display =
-            "none";
+      alert("Book not found.");
 
-    }, 5000);
+      return;
+    }
 
-}
-
-
-/* =====================================================
-   HTML ESCAPE
-   ===================================================== */
-
-function escapeHTML(value) {
 
     if (
-        value === null ||
-        value === undefined
+      Number(selectedBook.available_quantity || 0)
+      <= 0
     ) {
 
-        return "";
+      alert("This book is not available.");
+
+      return;
+    }
+
+
+    const { error: transactionError } =
+      await supabaseClient
+        .from("transactions")
+        .insert({
+
+          member_id: Number(memberId),
+          book_id: Number(bookId),
+          issue_date:
+            new Date()
+              .toISOString()
+              .split("T")[0],
+          due_date:
+            dueDate || null,
+          status: "Issued"
+
+        });
+
+
+    if (transactionError) {
+
+      alert(
+        "Book could not be issued:\n" +
+        transactionError.message
+      );
+
+      return;
+    }
+
+
+    const newAvailable =
+      Number(selectedBook.available_quantity) - 1;
+
+
+    const { error: bookError } =
+      await supabaseClient
+        .from("books")
+        .update({
+          available_quantity: newAvailable
+        })
+        .eq("id", Number(bookId));
+
+
+    if (bookError) {
+
+      alert(
+        "Transaction created but book quantity update failed:\n" +
+        bookError.message
+      );
+
+      return;
+    }
+
+
+    alert("Book issued successfully!");
+
+
+    closeModal("issueModal");
+
+    await loadBooks();
+    await loadTransactions();
+
+    updateDashboard();
+    updateInventory();
+    updateReports();
+
+  }
+
+
+  /* ==========================================================
+     RETURN BOOK
+     ========================================================== */
+
+  async function returnBook(id, bookId) {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can return books.");
+
+      return;
+    }
+
+
+    const confirmReturn =
+      confirm(
+        "Mark this book as returned?"
+      );
+
+    if (!confirmReturn) {
+      return;
+    }
+
+
+    const { error: transactionError } =
+      await supabaseClient
+        .from("transactions")
+        .update({
+
+          return_date:
+            new Date()
+              .toISOString()
+              .split("T")[0],
+
+          status: "Returned"
+
+        })
+        .eq("id", id);
+
+
+    if (transactionError) {
+
+      alert(
+        "Return failed:\n" +
+        transactionError.message
+      );
+
+      return;
+    }
+
+
+    const selectedBook =
+      books.find(
+        book =>
+          String(book.id) === String(bookId)
+      );
+
+
+    if (selectedBook) {
+
+      const newAvailable =
+        Number(selectedBook.available_quantity || 0) + 1;
+
+
+      const maxQuantity =
+        Number(selectedBook.quantity || newAvailable);
+
+
+      await supabaseClient
+        .from("books")
+        .update({
+          available_quantity:
+            Math.min(
+              newAvailable,
+              maxQuantity
+            )
+        })
+        .eq("id", Number(bookId));
 
     }
 
 
-    return String(value)
+    alert("Book returned successfully!");
 
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
 
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
+    await loadBooks();
+    await loadTransactions();
 
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
+    updateDashboard();
+    updateInventory();
+    updateReports();
 
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
+  }
 
-        .replaceAll(
-            "'",
-            "&#039;"
+
+  /* ==========================================================
+     RENDER TRANSACTIONS
+     ========================================================== */
+
+  function renderTransactions() {
+
+    const tbody =
+      document.getElementById(
+        "transactionsTableBody"
+      );
+
+    tbody.innerHTML = "";
+
+
+    if (!transactions.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7"
+              style="text-align:center;color:#64748b;">
+            No transactions found.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    transactions.forEach(transaction => {
+
+      const memberName =
+        transaction.members
+          ? transaction.members.name
+          : "Unknown";
+
+      const bookTitle =
+        transaction.books
+          ? transaction.books.title
+          : "Unknown";
+
+      const bookId =
+        transaction.book_id;
+
+
+      const statusBadge =
+        transaction.status === "Returned"
+
+          ? `<span class="badge badge-green">
+               Returned
+             </span>`
+
+          : `<span class="badge badge-yellow">
+               Issued
+             </span>`;
+
+
+      const action =
+        transaction.status === "Issued"
+
+          ? `
+            <button
+              class="btn btn-success"
+              onclick="returnBook(
+                ${transaction.id},
+                ${bookId}
+              )">
+              Return
+            </button>
+          `
+
+          : "-";
+
+
+      tbody.innerHTML += `
+
+        <tr>
+
+          <td>${escapeHtml(memberName)}</td>
+
+          <td>${escapeHtml(bookTitle)}</td>
+
+          <td>
+            ${transaction.issue_date || "-"}
+          </td>
+
+          <td>
+            ${transaction.due_date || "-"}
+          </td>
+
+          <td>
+            ${transaction.return_date || "-"}
+          </td>
+
+          <td>
+            ${statusBadge}
+          </td>
+
+          <td>
+            ${action}
+          </td>
+
+        </tr>
+
+      `;
+
+    });
+
+  }
+
+
+  /* ==========================================================
+     INVENTORY
+     ========================================================== */
+
+  function updateInventory() {
+
+    const tbody =
+      document.getElementById(
+        "inventoryTableBody"
+      );
+
+    tbody.innerHTML = "";
+
+
+    if (!books.length) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6"
+              style="text-align:center;color:#64748b;">
+            No inventory available.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    books.forEach(book => {
+
+      const total =
+        Number(book.quantity || 0);
+
+      const available =
+        Number(book.available_quantity || 0);
+
+      const issued =
+        Math.max(
+          total - available,
+          0
         );
 
-}
+
+      tbody.innerHTML += `
+
+        <tr>
+
+          <td>${escapeHtml(book.book_id)}</td>
+
+          <td>${escapeHtml(book.title)}</td>
+
+          <td>${escapeHtml(book.author)}</td>
+
+          <td>${total}</td>
+
+          <td>
+            <span class="badge badge-green">
+              ${available}
+            </span>
+          </td>
+
+          <td>
+            <span class="badge badge-yellow">
+              ${issued}
+            </span>
+          </td>
+
+        </tr>
+
+      `;
+
+    });
+
+  }
 
 
-/* =====================================================
-   SESSION CHECK
-   ===================================================== */
+  /* ==========================================================
+     DASHBOARD
+     ========================================================== */
 
-async function checkSession() {
+  function updateDashboard() {
 
-    const { data } =
-        await supabaseClient
-            .auth
-            .getSession();
+    const totalBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.quantity || 0),
+        0
+      );
+
+    const availableBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.available_quantity || 0),
+        0
+      );
 
 
-    if (!data.session) {
+    document.getElementById(
+      "totalBooks"
+    ).textContent = totalBooks;
 
-        return;
 
+    document.getElementById(
+      "availableBooks"
+    ).textContent = availableBooks;
+
+
+    document.getElementById(
+      "totalMembers"
+    ).textContent = members.length;
+
+
+    const issued =
+      transactions.filter(
+        t => t.status === "Issued"
+      ).length;
+
+
+    document.getElementById(
+      "issuedBooks"
+    ).textContent = issued;
+
+  }
+
+
+  /* ==========================================================
+     REPORTS
+     ========================================================== */
+
+  function updateReports() {
+
+    const totalBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.quantity || 0),
+        0
+      );
+
+    const availableBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.available_quantity || 0),
+        0
+      );
+
+    const issued =
+      transactions.filter(
+        t => t.status === "Issued"
+      ).length;
+
+
+    document.getElementById(
+      "reportBooks"
+    ).textContent = totalBooks;
+
+    document.getElementById(
+      "reportMembers"
+    ).textContent = members.length;
+
+    document.getElementById(
+      "reportIssued"
+    ).textContent = issued;
+
+    document.getElementById(
+      "reportAvailable"
+    ).textContent = availableBooks;
+
+  }
+
+
+  /* ==========================================================
+     PAGE NAVIGATION
+     ========================================================== */
+
+  function showPage(page) {
+
+    const adminPages = [
+      "members",
+      "transactions",
+      "reports"
+    ];
+
+
+    if (
+      currentRole !== "admin" &&
+      adminPages.includes(page)
+    ) {
+
+      alert(
+        "This section is available only for Admin."
+      );
+
+      return;
+    }
+
+
+    document
+      .querySelectorAll(".page")
+      .forEach(section => {
+
+        section.classList.remove("active");
+
+      });
+
+
+    const selectedPage =
+      document.getElementById(
+        "page-" + page
+      );
+
+
+    if (!selectedPage) return;
+
+    selectedPage.classList.add("active");
+
+
+    document
+      .querySelectorAll(".nav-item")
+      .forEach(item => {
+
+        item.classList.remove("active");
+
+      });
+
+
+    const nav =
+      document.getElementById(
+        "nav-" + page
+      );
+
+
+    if (nav) {
+      nav.classList.add("active");
+    }
+
+
+    const titles = {
+
+      dashboard: "Dashboard",
+      books: "Books",
+      members: "Members",
+      transactions: "Transactions",
+      inventory: "Inventory",
+      reports: "Reports"
+
+    };
+
+
+    document.getElementById(
+      "pageTitle"
+    ).textContent =
+      titles[page] || "LIBRA";
+
+  }
+
+
+  /* ==========================================================
+     MODALS
+     ========================================================== */
+
+  function openBookModal() {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can add books.");
+
+      return;
+    }
+
+    document
+      .getElementById("bookModal")
+      .classList.add("show");
+
+  }
+
+
+  function openMemberModal() {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can add members.");
+
+      return;
+    }
+
+    document
+      .getElementById("memberModal")
+      .classList.add("show");
+
+  }
+
+
+  function openIssueModal() {
+
+    if (currentRole !== "admin") {
+
+      alert("Only Admin can issue books.");
+
+      return;
+    }
+
+    populateIssueMembers();
+    populateIssueBooks();
+
+    document
+      .getElementById("issueModal")
+      .classList.add("show");
+
+  }
+
+
+  function closeModal(id) {
+
+    document
+      .getElementById(id)
+      .classList.remove("show");
+
+  }
+
+
+  /* ==========================================================
+     CLEAR FORMS
+     ========================================================== */
+
+  function clearBookForm() {
+
+    document.getElementById("bookId").value = "";
+    document.getElementById("bookTitle").value = "";
+    document.getElementById("bookAuthor").value = "";
+    document.getElementById("bookPublisher").value = "";
+    document.getElementById("bookEdition").value = "";
+    document.getElementById("bookIsbn").value = "";
+    document.getElementById("bookCategory").value = "";
+    document.getElementById("bookYear").value = "";
+    document.getElementById("bookPrice").value = "";
+    document.getElementById("bookQuantity").value = "1";
+    document.getElementById("bookShelf").value = "";
+    document.getElementById("bookIdentifier").value = "";
+
+  }
+
+
+  function clearMemberForm() {
+
+    document.getElementById("studentId").value = "";
+    document.getElementById("memberName").value = "";
+    document.getElementById("memberDepartment").value = "";
+    document.getElementById("memberEmail").value = "";
+    document.getElementById("memberPhone").value = "";
+
+  }
+
+
+  /* ==========================================================
+     SEARCH
+     ========================================================== */
+
+  function filterBooks() {
+
+    const query =
+      document.getElementById(
+        "bookSearch"
+      ).value
+       .toLowerCase();
+
+
+    const filtered =
+      books.filter(book =>
+
+        String(book.book_id || "")
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(book.title || "")
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(book.author || "")
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(book.category || "")
+          .toLowerCase()
+          .includes(query)
+
+      );
+
+
+    renderBooks(filtered);
+
+  }
+
+
+  function filterMembers() {
+
+    const query =
+      document.getElementById(
+        "memberSearch"
+      ).value
+       .toLowerCase();
+
+
+    const filtered =
+      members.filter(member =>
+
+        String(member.student_id || "")
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(member.name || "")
+          .toLowerCase()
+          .includes(query)
+
+        ||
+
+        String(member.department || "")
+          .toLowerCase()
+          .includes(query)
+
+      );
+
+
+    renderMembers(filtered);
+
+  }
+
+
+  /* ==========================================================
+     MESSAGE
+     ========================================================== */
+
+  function showMessage(
+    elementId,
+    message,
+    type
+  ) {
+
+    const element =
+      document.getElementById(elementId);
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.className =
+      "message " + type;
+
+  }
+
+
+  /* ==========================================================
+     HTML ESCAPE
+     ========================================================== */
+
+  function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  /* ==========================================================
+     LOGOUT
+     ========================================================== */
+
+  async function logoutUser() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+    currentRole = "student";
+
+    document
+      .getElementById("app")
+      .style.display = "none";
+
+    document
+      .getElementById("loginPage")
+      .style.display = "flex";
+
+    document.getElementById(
+      "loginEmail"
+    ).value = "";
+
+    document.getElementById(
+      "loginPassword"
+    ).value = "";
+
+    selectLoginType("student");
+
+  }
+
+
+  /* ==========================================================
+     CHECK EXISTING SESSION
+     ========================================================== */
+
+  async function checkSession() {
+
+    const {
+      data: {
+        session
+      }
+    } =
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if (!session) {
+      return;
     }
 
 
     currentUser =
-        data.session.user;
+      session.user;
 
 
     const role =
-        await getUserRole();
+      await getUserRole(
+        currentUser.id
+      );
 
 
     if (!role) {
 
-        await supabaseClient
-            .auth
-            .signOut();
+      await supabaseClient
+        .auth
+        .signOut();
 
-        return;
+      return;
     }
 
 
-    document
-        .getElementById("loginPage")
-        .classList
-        .add("hidden");
+    currentRole =
+      role;
 
 
     document
-        .getElementById("app")
-        .classList
-        .remove("hidden");
+      .getElementById("loginPage")
+      .style.display = "none";
 
 
     document
-        .getElementById("userEmail")
-        .textContent =
-        currentUser.email;
+      .getElementById("app")
+      .style.display = "block";
 
 
     applyRolePermissions();
 
-
     await loadAllData();
 
-}
+  }
 
 
-/* =====================================================
-   START APPLICATION
-   ===================================================== */
+  /* ==========================================================
+     START APPLICATION
+     ========================================================== */
 
-checkSession();
+  document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+      checkSession();
+
+    }
+  );
 
 </script>
 
 </body>
 </html>
-```
