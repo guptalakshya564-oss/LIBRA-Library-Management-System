@@ -5,7 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LIBRA - Library Management System</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>async function checkUserRole() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    if (!user) return;
+
+    const { data: profile, error } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (error) {
+        console.error("Profile role error:", error);
+        return;
+    }
+
+    const addBookBtn = document.getElementById("addBookBtn");
+
+    if (addBookBtn) {
+        addBookBtn.style.display =
+            profile.role === "admin" ? "inline-block" : "none";
+    }
+}
+
+checkUserRole();
 
   <style>/* ===== LIBRA COLORFUL PREMIUM THEME ===== */
 
