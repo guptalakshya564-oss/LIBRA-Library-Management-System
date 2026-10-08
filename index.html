@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIBRA - Library Management System</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f8fc;
+      color: #172b4d;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* LOGIN */
+    #loginPage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #e8f5ff, #ffffff);
+    }
+
+    .login-box {
+      width: 400px;
+      background: white;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.12);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 34px;
+      font-weight: bold;
+      color: #1565c0;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #667085;
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      color: #1565c0;
+      border-bottom: 3px solid #1565c0;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      margin-top: 8px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #1565c0;
+      color: white;
+    }
+
+    .primary:hover {
+      background: #0d47a1;
+    }
+
+    .danger {
+      background: #d32f2f;
+      color: white;
+    }
+
+    /* APP */
+    #app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #102a43;
+      color: white;
+      padding: 25px 15px;
+      position: fixed;
+      height: 100vh;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #90caf9;
+    }
+
+    .nav-btn {
+      width: 100%;
+      background: transparent;
+      color: #d9e8f5;
+      text-align: left;
+      margin: 5px 0;
+      padding: 13px;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #1e4e78;
+      color: white;
+    }
+
+    .logout {
+      margin-top: 30px;
+      background: #c62828;
+      color: white;
+      width: 100%;
+    }
+
+    .content {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+      padding: 30px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .topbar h1 {
+      font-size: 28px;
+    }
+
+    .user-info {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+
+    /* CARDS */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.07);
+    }
+
+    .card h3 {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .card .number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #1565c0;
+    }
+
+    .section {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.07);
+      margin-bottom: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 15px;
+    }
+
+    .section-header input {
+      width: 300px;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 13px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #edf6ff;
+      color: #174a7e;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .available {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .issued {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-box {
+      background: white;
+      width: 500px;
+      max-width: 90%;
+      padding: 25px;
+      border-radius: 15px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    @media(max-width: 900px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .sidebar {
+        width: 190px;
+      }
+
+      .content {
+        margin-left: 190px;
+        width: calc(100% - 190px);
+      }
+    }
+
+    @media(max-width: 650px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      #app {
+        display: block;
+      }
+
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+
+  <div class="login-box">
+
+    <div class="logo">LIBRA</div>
+    <div class="subtitle">Library Management System</div>
+
+    <div class="tabs">
+      <button class="tab active" id="studentTab"
+              onclick="selectLoginType('student')">
+        Student Login
+      </button>
+
+      <button class="tab" id="adminTab"
+              onclick="selectLoginType('admin')">
+        Admin Login
+      </button>
+    </div>
+
+    <div id="loginMessage" class="message"></div>
+
+    <label>Email</label>
+    <input type="email" id="loginEmail"
+           placeholder="Enter your email">
+
+    <label>Password</label>
+    <input type="password" id="loginPassword"
+           placeholder="Enter password">
+
+    <button class="primary" style="width:100%;"
+            onclick="login()">
+      Login
+    </button>
+
+    <p style="text-align:center;margin-top:15px;color:#667085;font-size:13px;">
+      LIBRA Digital Library System
+    </p>
+
+  </div>
+</div>
+
+
+<!-- MAIN APPLICATION -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <h2>LIBRA</h2>
+
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">
+      🏠 Dashboard
+    </button>
+
+    <button class="nav-btn" onclick="showPage('books',this)">
+      📚 Books
+    </button>
+
+    <button class="nav-btn" onclick="showPage('members',this)">
+      👨‍🎓 Members
+    </button>
+
+    <button class="nav-btn" onclick="showPage('transactions',this)">
+      🔄 Issue / Return
+    </button>
+
+    <button class="nav-btn" onclick="showPage('inventory',this)">
+      📦 Inventory
+    </button>
+
+    <button class="nav-btn" onclick="showPage('reports',this)">
+      📊 Reports
+    </button>
+
+    <button class="logout" onclick="logout()">
+      Logout
+    </button>
+
+  </aside>
+
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="topbar">
+
+      <h1 id="pageTitle">Dashboard</h1>
+
+      <div class="user-info">
+        <span id="userEmail">User</span>
+      </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <div id="dashboardPage">
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>Total Books</h3>
+          <div class="number" id="totalBooks">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Total Members</h3>
+          <div class="number" id="totalMembers">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Available Books</h3>
+          <div class="number" id="availableBooks">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Issued Books</h3>
+          <div class="number" id="issuedBooks">0</div>
+        </div>
+
+      </div>
+
+      <div class="section">
+        <h2>Welcome to LIBRA</h2>
+        <p style="margin-top:10px;color:#667085;">
+          Library Management System for managing books, members,
+          inventory and issue/return transactions.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- BOOKS -->
+    <div id="booksPage" class="hidden">
+
+      <div class="section">
+
+        <div class="section-header">
+
+          <h2>Books</h2>
+
+          <div>
+            <input id="bookSearch"
+                   placeholder="Search title, author or ISBN..."
+                   oninput="filterBooks()">
+
+            <button class="primary"
+                    onclick="openBookModal()">
+              + Add Book
+            </button>
+          </div>
+
+        </div>
+
+        <div style="overflow-x:auto;">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Available</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="booksTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- MEMBERS -->
+    <div id="membersPage" class="hidden">
+
+      <div class="section">
+
+        <div class="section-header">
+          <h2>Members</h2>
+
+          <button class="primary"
+                  onclick="openMemberModal()">
+            + Add Member
+          </button>
+        </div>
+
+        <div style="overflow-x:auto;">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="membersTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TRANSACTIONS -->
+    <div id="transactionsPage" class="hidden">
+
+      <div class="section">
+
+        <div class="section-header">
+          <h2>Issue / Return</h2>
+
+          <button class="primary"
+                  onclick="openIssueModal()">
+            + Issue Book
+          </button>
+        </div>
+
+        <div style="overflow-x:auto;">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Member</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="transactionsTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- INVENTORY -->
+    <div id="inventoryPage" class="hidden">
+
+      <div class="section">
+
+        <h2>Inventory</h2>
+
+        <div style="overflow-x:auto;margin-top:20px;">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Title</th>
+                <th>Total Quantity</th>
+                <th>Available</th>
+                <th>Issued</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="inventoryTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- REPORTS -->
+    <div id="reportsPage" class="hidden">
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>Total Books</h3>
+          <div class="number" id="reportBooks">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Total Members</h3>
+          <div class="number" id="reportMembers">0</div>
+        </div>
+
+        <div class="card">
+          <h3>Total Transactions</h3>
+          <div class="number" id="reportTransactions">0</div>
+        </div>
+
+      </div>
+
+      <div class="section">
+        <h2>Library Report</h2>
+        <p style="margin-top:10px;color:#667085;">
+          This section provides a quick overview of library records
+          stored in the LIBRA database.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- BOOK MODAL -->
+<div id="bookModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <h2>Add Book</h2>
+
+    <div id="bookMessage" class="message"></div>
+
+    <input id="bookId" placeholder="Book ID *">
+    <input id="bookTitle" placeholder="Book Title *">
+    <input id="bookAuthor" placeholder="Author *">
+    <input id="bookPublisher" placeholder="Publisher">
+    <input id="bookEdition" placeholder="Edition">
+    <input id="bookISBN" placeholder="ISBN">
+    <input id="bookCategory" placeholder="Category">
+    <input id="bookYear" type="number" placeholder="Publication Year">
+    <input id="bookQuantity" type="number" min="1" value="1"
+           placeholder="Quantity">
+    <input id="bookShelf" placeholder="Shelf Location">
+
+    <div class="modal-actions">
+
+      <button onclick="closeBookModal()">
+        Cancel
+      </button>
+
+      <button class="primary"
+              onclick="addBook()">
+        Save Book
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MEMBER MODAL -->
+<div id="memberModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <h2>Add Member</h2>
+
+    <div id="memberMessage" class="message"></div>
+
+    <input id="studentId" placeholder="Student ID *">
+    <input id="memberName" placeholder="Student Name *">
+    <input id="department" placeholder="Department">
+    <input id="memberEmail" type="email" placeholder="Email">
+    <input id="memberPhone" placeholder="Phone">
+
+    <div class="modal-actions">
+
+      <button onclick="closeMemberModal()">
+        Cancel
+      </button>
+
+      <button class="primary"
+              onclick="addMember()">
+        Save Member
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ISSUE MODAL -->
+<div id="issueModal" class="modal hidden">
+
+  <div class="modal-box">
+
+    <h2>Issue Book</h2>
+
+    <div id="issueMessage" class="message"></div>
+
+    <label>Select Book</label>
+    <select id="issueBook"></select>
+
+    <label>Select Member</label>
+    <select id="issueMember"></select>
+
+    <label>Due Date</label>
+    <input id="dueDate" type="date">
+
+    <div class="modal-actions">
+
+      <button onclick="closeIssueModal()">
+        Cancel
+      </button>
+
+      <button class="primary"
+              onclick="issueBook()">
+        Issue Book
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  /* =========================================
+     SUPABASE CONFIGURATION
+     ========================================= */
+
+  const SUPABASE_URL =
+    "https://awovzkajeetvcglauhsq.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_yIRklzwYEJhv3A1NHG_BCA_ivcozDnI";
+
+  const supabaseClient =
+    supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  let currentUser = null;
+  let loginType = "student";
+
+  let books = [];
+  let members = [];
+  let transactions = [];
+
+
+  /* =========================================
+     LOGIN TYPE
+     ========================================= */
+
+  function selectLoginType(type) {
+
+    loginType = type;
+
+    document
+      .getElementById("studentTab")
+      .classList
+      .toggle("active", type === "student");
+
+    document
+      .getElementById("adminTab")
+      .classList
+      .toggle("active", type === "admin");
+  }
+
+
+  /* =========================================
+     LOGIN
+     ========================================= */
+
+  async function login() {
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    if (!email || !password) {
+      showMessage(
+        "loginMessage",
+        "Please enter email and password.",
+        "error"
+      );
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+
+      showMessage(
+        "loginMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+    currentUser = data.user;
+
+    document
+      .getElementById("loginPage")
+      .classList
+      .add("hidden");
+
+    document
+      .getElementById("app")
+      .classList
+      .remove("hidden");
+
+    document
+      .getElementById("userEmail")
+      .textContent = currentUser.email;
+
+    await loadAllData();
+  }
+
+
+  /* =========================================
+     LOGOUT
+     ========================================= */
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+
+    document
+      .getElementById("app")
+      .classList
+      .add("hidden");
+
+    document
+      .getElementById("loginPage")
+      .classList
+      .remove("hidden");
+  }
+
+
+  /* =========================================
+     NAVIGATION
+     ========================================= */
+
+  function showPage(page, button) {
+
+    const pages = [
+      "dashboard",
+      "books",
+      "members",
+      "transactions",
+      "inventory",
+      "reports"
+    ];
+
+    pages.forEach(p => {
+
+      document
+        .getElementById(p + "Page")
+        .classList
+        .add("hidden");
+
+    });
+
+    document
+      .getElementById(page + "Page")
+      .classList
+      .remove("hidden");
+
+    document
+      .querySelectorAll(".nav-btn")
+      .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    const titles = {
+      dashboard: "Dashboard",
+      books: "Books",
+      members: "Members",
+      transactions: "Issue / Return",
+      inventory: "Inventory",
+      reports: "Reports"
+    };
+
+    document
+      .getElementById("pageTitle")
+      .textContent = titles[page];
+  }
+
+
+  /* =========================================
+     LOAD DATA
+     ========================================= */
+
+  async function loadAllData() {
+
+    await loadBooks();
+    await loadMembers();
+    await loadTransactions();
+
+    updateDashboard();
+    renderInventory();
+    renderReports();
+  }
+
+
+  /* =========================================
+     BOOKS
+     ========================================= */
+
+  async function loadBooks() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("books")
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+
+      console.error(error);
+
+      showMessage(
+        "loginMessage",
+        "Books load error: " + error.message,
+        "error"
+      );
+
+      return;
+    }
+
+    books = data || [];
+
+    renderBooks();
+  }
+
+
+  function renderBooks() {
+
+    const table =
+      document.getElementById("booksTable");
+
+    table.innerHTML = "";
+
+    books.forEach(book => {
+
+      const status =
+        book.available_quantity > 0
+          ? `<span class="badge available">Available</span>`
+          : `<span class="badge issued">Not Available</span>`;
+
+      table.innerHTML += `
+        <tr>
+          <td>${escapeHTML(book.book_id)}</td>
+          <td>${escapeHTML(book.title)}</td>
+          <td>${escapeHTML(book.author)}</td>
+          <td>${escapeHTML(book.isbn || "-")}</td>
+          <td>${escapeHTML(book.category || "-")}</td>
+          <td>${book.quantity}</td>
+          <td>${book.available_quantity} ${status}</td>
+          <td>
+            <button class="danger"
+                    onclick="deleteBook(${book.id})">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+
+  function filterBooks() {
+
+    const search =
+      document
+        .getElementById("bookSearch")
+        .value
+        .toLowerCase();
+
+    const table =
+      document.getElementById("booksTable");
+
+    table.innerHTML = "";
+
+    books
+      .filter(book =>
+        String(book.title || "").toLowerCase().includes(search) ||
+        String(book.author || "").toLowerCase().includes(search) ||
+        String(book.isbn || "").toLowerCase().includes(search) ||
+        String(book.book_id || "").toLowerCase().includes(search)
+      )
+      .forEach(book => {
+
+        const status =
+          book.available_quantity > 0
+            ? `<span class="badge available">Available</span>`
+            : `<span class="badge issued">Not Available</span>`;
+
+        table.innerHTML += `
+          <tr>
+            <td>${escapeHTML(book.book_id)}</td>
+            <td>${escapeHTML(book.title)}</td>
+            <td>${escapeHTML(book.author)}</td>
+            <td>${escapeHTML(book.isbn || "-")}</td>
+            <td>${escapeHTML(book.category || "-")}</td>
+            <td>${book.quantity}</td>
+            <td>${book.available_quantity} ${status}</td>
+            <td>
+              <button class="danger"
+                      onclick="deleteBook(${book.id})">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+  }
+
+
+  async function addBook() {
+
+    const quantity =
+      Number(document.getElementById("bookQuantity").value) || 1;
+
+    const book = {
+      book_id: document.getElementById("bookId").value.trim(),
+      title: document.getElementById("bookTitle").value.trim(),
+      author: document.getElementById("bookAuthor").value.trim(),
+      publisher: document.getElementById("bookPublisher").value.trim(),
+      edition: document.getElementById("bookEdition").value.trim(),
+      isbn: document.getElementById("bookISBN").value.trim() || null,
+      category: document.getElementById("bookCategory").value.trim(),
+      publication_year:
+        Number(document.getElementById("bookYear").value) || null,
+      quantity: quantity,
+      available_quantity: quantity,
+      shelf_location:
+        document.getElementById("bookShelf").value.trim()
+    };
+
+    if (!book.book_id || !book.title || !book.author) {
+
+      showMessage(
+        "bookMessage",
+        "Book ID, Title and Author are required.",
+        "error"
+      );
+
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("books")
+        .insert(book);
+
+    if (error) {
+
+      showMessage(
+        "bookMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+    closeBookModal();
+
+    await loadAllData();
+  }
+
+
+  async function deleteBook(id) {
+
+    if (!confirm("Delete this book?")) return;
+
+    const { error } =
+      await supabaseClient
+        .from("books")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+
+      alert(error.message);
+      return;
+    }
+
+    await loadAllData();
+  }
+
+
+  /* =========================================
+     MEMBERS
+     ========================================= */
+
+  async function loadMembers() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("members")
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+
+      console.error(error);
+      return;
+    }
+
+    members = data || [];
+
+    renderMembers();
+  }
+
+
+  function renderMembers() {
+
+    const table =
+      document.getElementById("membersTable");
+
+    table.innerHTML = "";
+
+    members.forEach(member => {
+
+      table.innerHTML += `
+        <tr>
+          <td>${escapeHTML(member.student_id)}</td>
+          <td>${escapeHTML(member.name)}</td>
+          <td>${escapeHTML(member.department || "-")}</td>
+          <td>${escapeHTML(member.email || "-")}</td>
+          <td>${escapeHTML(member.phone || "-")}</td>
+          <td>
+            <span class="badge available">
+              ${escapeHTML(member.status)}
+            </span>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+
+  async function addMember() {
+
+    const member = {
+
+      student_id:
+        document.getElementById("studentId").value.trim(),
+
+      name:
+        document.getElementById("memberName").value.trim(),
+
+      department:
+        document.getElementById("department").value.trim(),
+
+      email:
+        document.getElementById("memberEmail").value.trim(),
+
+      phone:
+        document.getElementById("memberPhone").value.trim(),
+
+      status: "Active"
+    };
+
+    if (!member.student_id || !member.name) {
+
+      showMessage(
+        "memberMessage",
+        "Student ID and Name are required.",
+        "error"
+      );
+
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("members")
+        .insert(member);
+
+    if (error) {
+
+      showMessage(
+        "memberMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+    closeMemberModal();
+
+    await loadAllData();
+  }
+
+
+  /* =========================================
+     TRANSACTIONS
+     ========================================= */
+
+  async function loadTransactions() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("transactions")
+        .select(`
+          *,
+          books(title),
+          members(name, student_id)
+        `)
+        .order("id", { ascending: false });
+
+    if (error) {
+
+      console.error(error);
+      return;
+    }
+
+    transactions = data || [];
+
+    renderTransactions();
+  }
+
+
+  function renderTransactions() {
+
+    const table =
+      document.getElementById("transactionsTable");
+
+    table.innerHTML = "";
+
+    transactions.forEach(transaction => {
+
+      table.innerHTML += `
+        <tr>
+          <td>${escapeHTML(transaction.books?.title || "-")}</td>
+
+          <td>
+            ${escapeHTML(transaction.members?.name || "-")}
+          </td>
+
+          <td>${transaction.issue_date || "-"}</td>
+
+          <td>${transaction.due_date || "-"}</td>
+
+          <td>${transaction.return_date || "-"}</td>
+
+          <td>
+            <span class="badge ${
+              transaction.status === "Issued"
+                ? "issued"
+                : "available"
+            }">
+              ${escapeHTML(transaction.status)}
+            </span>
+          </td>
+
+          <td>
+            ${
+              transaction.status === "Issued"
+              ?
+              `<button class="primary"
+                       onclick="returnBook(${transaction.id}, ${transaction.book_id})">
+                 Return
+               </button>`
+              :
+              "-"
+            }
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+
+  async function issueBook() {
+
+    const bookId =
+      Number(document.getElementById("issueBook").value);
+
+    const memberId =
+      Number(document.getElementById("issueMember").value);
+
+    const dueDate =
+      document.getElementById("dueDate").value;
+
+    if (!bookId || !memberId || !dueDate) {
+
+      showMessage(
+        "issueMessage",
+        "Please select book, member and due date.",
+        "error"
+      );
+
+      return;
+    }
+
+    const book =
+      books.find(b => b.id === bookId);
+
+    if (!book || book.available_quantity <= 0) {
+
+      showMessage(
+        "issueMessage",
+        "This book is not available.",
+        "error"
+      );
+
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("transactions")
+        .insert({
+          member_id: memberId,
+          book_id: bookId,
+          issue_date: new Date()
+            .toISOString()
+            .split("T")[0],
+          due_date: dueDate,
+          status: "Issued"
+        });
+
+    if (error) {
+
+      showMessage(
+        "issueMessage",
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+    await supabaseClient
+      .from("books")
+      .update({
+        available_quantity:
+          book.available_quantity - 1
+      })
+      .eq("id", bookId);
+
+    closeIssueModal();
+
+    await loadAllData();
+  }
+
+
+  async function returnBook(transactionId, bookId) {
+
+    if (!confirm("Return this book?")) return;
+
+    const { error } =
+      await supabaseClient
+        .from("transactions")
+        .update({
+          return_date:
+            new Date()
+              .toISOString()
+              .split("T")[0],
+
+          status: "Returned"
+        })
+        .eq("id", transactionId);
+
+    if (error) {
+
+      alert(error.message);
+      return;
+    }
+
+    const book =
+      books.find(b => b.id === bookId);
+
+    if (book) {
+
+      await supabaseClient
+        .from("books")
+        .update({
+          available_quantity:
+            book.available_quantity + 1
+        })
+        .eq("id", bookId);
+    }
+
+    await loadAllData();
+  }
+
+
+  /* =========================================
+     INVENTORY
+     ========================================= */
+
+  function renderInventory() {
+
+    const table =
+      document.getElementById("inventoryTable");
+
+    table.innerHTML = "";
+
+    books.forEach(book => {
+
+      const issued =
+        book.quantity - book.available_quantity;
+
+      const status =
+        book.available_quantity > 0
+          ? "Available"
+          : "Out of Stock";
+
+      table.innerHTML += `
+        <tr>
+
+          <td>${escapeHTML(book.book_id)}</td>
+
+          <td>${escapeHTML(book.title)}</td>
+
+          <td>${book.quantity}</td>
+
+          <td>${book.available_quantity}</td>
+
+          <td>${issued}</td>
+
+          <td>
+            <span class="badge ${
+              book.available_quantity > 0
+                ? "available"
+                : "issued"
+            }">
+              ${status}
+            </span>
+          </td>
+
+        </tr>
+      `;
+    });
+  }
+
+
+  /* =========================================
+     DASHBOARD / REPORTS
+     ========================================= */
+
+  function updateDashboard() {
+
+    const totalBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.quantity || 0),
+        0
+      );
+
+    const availableBooks =
+      books.reduce(
+        (sum, book) =>
+          sum + Number(book.available_quantity || 0),
+        0
+      );
+
+    const issuedBooks =
+      totalBooks - availableBooks;
+
+    document.getElementById("totalBooks")
+      .textContent = totalBooks;
+
+    document.getElementById("totalMembers")
+      .textContent = members.length;
+
+    document.getElementById("availableBooks")
+      .textContent = availableBooks;
+
+    document.getElementById("issuedBooks")
+      .textContent = issuedBooks;
+  }
+
+
+  function renderReports() {
+
+    document.getElementById("reportBooks")
+      .textContent = books.length;
+
+    document.getElementById("reportMembers")
+      .textContent = members.length;
+
+    document.getElementById("reportTransactions")
+      .textContent = transactions.length;
+  }
+
+
+  /* =========================================
+     MODALS
+     ========================================= */
+
+  function openBookModal() {
+    document
+      .getElementById("bookModal")
+      .classList.remove("hidden");
+  }
+
+  function closeBookModal() {
+    document
+      .getElementById("bookModal")
+      .classList.add("hidden");
+  }
+
+
+  function openMemberModal() {
+    document
+      .getElementById("memberModal")
+      .classList.remove("hidden");
+  }
+
+  function closeMemberModal() {
+    document
+      .getElementById("memberModal")
+      .classList.add("hidden");
+  }
+
+
+  function openIssueModal() {
+
+    const bookSelect =
+      document.getElementById("issueBook");
+
+    const memberSelect =
+      document.getElementById("issueMember");
+
+    bookSelect.innerHTML =
+      '<option value="">Select Book</option>';
+
+    memberSelect.innerHTML =
+      '<option value="">Select Member</option>';
+
+    books
+      .filter(book => book.available_quantity > 0)
+      .forEach(book => {
+
+        bookSelect.innerHTML += `
+          <option value="${book.id}">
+            ${escapeHTML(book.title)}
+          </option>
+        `;
+      });
+
+    members.forEach(member => {
+
+      memberSelect.innerHTML += `
+        <option value="${member.id}">
+          ${escapeHTML(member.name)}
+          (${escapeHTML(member.student_id)})
+        </option>
+      `;
+    });
+
+    document
+      .getElementById("issueModal")
+      .classList.remove("hidden");
+  }
+
+
+  function closeIssueModal() {
+
+    document
+      .getElementById("issueModal")
+      .classList.add("hidden");
+  }
+
+
+  /* =========================================
+     MESSAGE
+     ========================================= */
+
+  function showMessage(id, text, type) {
+
+    const element =
+      document.getElementById(id);
+
+    element.textContent = text;
+
+    element.className =
+      "message " + type;
+
+    element.style.display = "block";
+
+    setTimeout(() => {
+      element.style.display = "none";
+    }, 5000);
+  }
+
+
+  /* =========================================
+     SECURITY / HTML ESCAPE
+     ========================================= */
+
+  function escapeHTML(value) {
+
+    if (value === null || value === undefined)
+      return "";
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  /* =========================================
+     SESSION CHECK
+     ========================================= */
+
+  async function checkSession() {
+
+    const { data } =
+      await supabaseClient.auth.getSession();
+
+    if (data.session) {
+
+      currentUser =
+        data.session.user;
+
+      document
+        .getElementById("loginPage")
+        .classList.add("hidden");
+
+      document
+        .getElementById("app")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("userEmail")
+        .textContent =
+        currentUser.email;
+
+      await loadAllData();
+    }
+  }
+
+  checkSession();
+
+</script>
+
+</body>
+</html>
